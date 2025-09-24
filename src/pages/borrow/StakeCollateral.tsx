@@ -1,209 +1,339 @@
+import { useWallet, type InputTransactionData } from "@aptos-labs/wallet-adapter-react";
 import { motion } from "framer-motion";
 import { AlertCircle, CheckCircle, CreditCard, DollarSign, Info, Loader, Plus, Wallet } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { FloatingOrbs } from "../../components/FloatingOrbs";
 import { GlowingButton } from "../../components/GlowingButton";
 import LoginWithGoogleButton from "../../components/LoginWithGoogleButton";
+import { WalletSelector } from "../../components/WalletSelector";
+import {
+  aptos,
+  CONTRACT_ADDRESS,
+  fetchUsdcBalance,
+  handleTransactionError,
+  unitsToUsdc,
+  usdcToUnits,
+  validateUsdcAmount,
+} from "../../lib/contractUtils";
 
-type WalletType = "privy" | null;
-
-type WalletSelectorProps = {
-  onSelectWallet: (type: WalletType) => void;
-  selectedWallet: WalletType;
-};
-
-const WalletSelector = ({ onSelectWallet, selectedWallet }: WalletSelectorProps) => {
-  const handlePrivyConnect = () => {
-    onSelectWallet("privy");
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      className="bg-black/40 backdrop-blur-2xl border border-white/10 rounded-2xl p-8"
-    >
-      <div className="text-center mb-8">
-        <CreditCard className="w-16 h-16 text-orange-400 mx-auto mb-4" />
-        <h2 className="text-2xl font-bold text-white mb-4">Choose Your Login Method</h2>
-        <p className="text-gray-400">Connect with a traditional software wallet or use Google for quick access</p>
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 sm:gap-6 mb-6">
-        {/* Privy Wallet Option */}
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={handlePrivyConnect}
-          className={`p-4 sm:p-6 rounded-xl border-2 transition-all duration-300 text-left min-h-[120px] touch-manipulation ${
-            selectedWallet === "privy"
-              ? "border-orange-500 bg-orange-500/10 backdrop-blur-sm"
-              : "border-white/10 hover:border-orange-500/50 bg-black/20 backdrop-blur-sm active:border-orange-500/70"
-          }`}
-        >
-          <div className="flex items-center mb-3 sm:mb-4">
-            <Wallet className="w-6 h-6 sm:w-8 sm:h-8 text-orange-400 mr-3" />
-            <div>
-              <h3 className="text-base sm:text-lg font-semibold text-white">Software Wallet</h3>
-              <p className="text-xs sm:text-sm text-gray-400">MetaMask, WalletConnect, etc.</p>
-            </div>
-          </div>
-          <ul className="text-xs sm:text-sm text-gray-300 space-y-1 sm:space-y-2">
-            <li className="flex items-center">
-              <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-green-400 mr-2 flex-shrink-0" />
-              Quick setup
-            </li>
-            <li className="flex items-center">
-              <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-green-400 mr-2 flex-shrink-0" />
-              Multiple wallet support
-            </li>
-            <li className="flex items-center">
-              <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-green-400 mr-2 flex-shrink-0" />
-              Cross-platform
-            </li>
-          </ul>
-        </motion.button>
-
-        {/* Google Login Option */}
-        <div className="space-y-3">
-          <div className="flex justify-center">
-            <LoginWithGoogleButton />
-          </div>
-          <p className="text-xs text-gray-500 text-center">Quick access with Google</p>
-        </div>
-      </div>
-
-      <div className="mt-6 text-center">
-        <p className="text-xs text-gray-500">Both options provide secure access to your credit line</p>
-      </div>
-    </motion.div>
-  );
+type CreditLineInfo = {
+  creditLimit: number;
+  currentDebt: number;
+  availableCredit: number;
+  isActive: boolean;
+  lastBorrowTimestamp: number;
+  collateralAmount?: number;
 };
 
 export default function StakeCollateral() {
   const navigate = useNavigate();
-
-  // Mock authentication states
-  const [authenticated, setAuthenticated] = useState(false);
+  const { account, connected, signAndSubmitTransaction } = useWallet();
 
   const [stakeAmount, setStakeAmount] = useState("");
   const [transactionStatus, setTransactionStatus] = useState<"idle" | "approving" | "staking" | "success" | "error">(
     "idle"
   );
-
-  // Mock user data
-  const [userBalance] = useState("10000000000"); // 10,000 USDC in wei format
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [usdcBalance, setUsdcBalance] = useState(0);
+  const [creditLineInfo, setCreditLineInfo] = useState<CreditLineInfo | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  // Mock existing credit info
-  const [existingCreditInfo] = useState({
-    collateralDeposited: 2500,
-    creditLimit: 2500,
-    borrowedAmount: 500,
-    interestAccrued: 12.5,
-    totalDebt: 512.5,
-    repaymentDueDate: Date.now() / 1000 + 30 * 24 * 60 * 60, // 30 days from now
-    isActive: true,
-  });
+  const getUsdcBalance = async () => {
+    if (!account?.address) return;
 
-  const [hasExistingCredit] = useState(true);
-  const [reputationScore] = useState(720);
-  const [creditIncreaseEligibility] = useState({ eligible: true, newLimit: 3500 });
-
-  // Simplified wallet state
-  const [selectedWallet, setSelectedWallet] = useState<WalletType>(null);
-
-  // Mock wallet info
-  const isWalletConnected = authenticated;
-  const walletAddress = authenticated ? "0x742d35Cc6634C0532925a3b8D402000BC64b2308" : null;
-  const currentWalletType: WalletType = authenticated ? "privy" : null;
-  const currentWalletAddress = walletAddress;
-
-  const usdcBalance = parseFloat(userBalance) / 1e6;
-  const baseCreditRatio = 1.0;
-
-  const handleWalletSelection = (type: WalletType) => {
-    setSelectedWallet(type);
-    if (type === "privy") {
-      setAuthenticated(true);
+    try {
+      const balance = await fetchUsdcBalance(account.address.toString());
+      setUsdcBalance(balance);
+    } catch (error) {
+      console.error("Error fetching USDC balance:", error);
+      setUsdcBalance(0);
     }
   };
 
+  const getCreditLineInfo = async (): Promise<CreditLineInfo | null> => {
+    if (!account?.address) return null;
+
+    try {
+      console.log(`Fetching credit line info for ${account.address.toString()}`);
+
+      try {
+        const [creditLimit, currentDebt, isActive, lastBorrowTimestamp] = await aptos.view<
+          [string, string, boolean, string]
+        >({
+          payload: {
+            function: `${CONTRACT_ADDRESS}::credit_manager::get_credit_line_info`,
+            functionArguments: [CONTRACT_ADDRESS, account.address.toString()],
+          },
+        });
+
+        const creditInfo: CreditLineInfo = {
+          creditLimit: unitsToUsdc(creditLimit),
+          currentDebt: unitsToUsdc(currentDebt),
+          availableCredit: unitsToUsdc(creditLimit) - unitsToUsdc(currentDebt),
+          isActive,
+          lastBorrowTimestamp: parseInt(lastBorrowTimestamp),
+        };
+
+        console.log("Found credit line via view function:", creditInfo);
+        return creditInfo;
+      } catch (viewError) {
+        console.log("View function failed, trying resource lookup:", viewError);
+
+        try {
+          const resource = await aptos.getAccountResource({
+            accountAddress: account.address.toString(),
+            resourceType: `${CONTRACT_ADDRESS}::credit_manager::CreditLine`,
+          });
+
+          const creditData = resource as any;
+          return {
+            creditLimit: unitsToUsdc(creditData.credit_limit),
+            currentDebt: unitsToUsdc(creditData.current_debt),
+            availableCredit: unitsToUsdc(creditData.credit_limit) - unitsToUsdc(creditData.current_debt),
+            isActive: creditData.is_active,
+            lastBorrowTimestamp: parseInt(creditData.last_borrow_timestamp),
+          };
+        } catch (resourceError) {
+          console.log("Resource lookup failed:", resourceError);
+          return null;
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching credit line info:", error);
+      return null;
+    }
+  };
+
+  const openCreditLine = async (creditLimitUsdc: number) => {
+    if (!account?.address) throw new Error("Wallet not connected");
+
+    if (!validateUsdcAmount(creditLimitUsdc)) {
+      throw new Error("Invalid credit limit amount");
+    }
+
+    const payload: InputTransactionData = {
+      data: {
+        function: `${CONTRACT_ADDRESS}::credit_manager::open_credit_line`,
+        functionArguments: [CONTRACT_ADDRESS, usdcToUnits(creditLimitUsdc)],
+      },
+    };
+
+    console.log("Open credit line payload:", payload);
+    return await signAndSubmitTransaction(payload);
+  };
+
+  const addCollateral = async (collateralAmountUsdc: number) => {
+    if (!account?.address) throw new Error("Wallet not connected");
+
+    if (!validateUsdcAmount(collateralAmountUsdc)) {
+      throw new Error("Invalid collateral amount");
+    }
+
+    const newCreditLimit = (creditLineInfo?.creditLimit || 0) + collateralAmountUsdc;
+
+    const payload: InputTransactionData = {
+      data: {
+        function: `${CONTRACT_ADDRESS}::credit_manager::increase_credit_limit`,
+        functionArguments: [CONTRACT_ADDRESS, usdcToUnits(newCreditLimit)],
+      },
+    };
+
+    console.log("Add collateral payload:", payload);
+    return await signAndSubmitTransaction(payload);
+  };
+
   const handleOpenCreditLine = async () => {
-    if (!stakeAmount || parseFloat(stakeAmount) <= 0 || !walletAddress) return;
+    if (!stakeAmount || parseFloat(stakeAmount) <= 0 || !account?.address) return;
 
     try {
       setTransactionStatus("staking");
       setErrorMessage("");
 
-      // Mock transaction process
-      toast.success("Opening credit line...");
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const amount = parseFloat(stakeAmount);
+
+      if (!validateUsdcAmount(amount)) {
+        throw new Error("Invalid credit limit amount. Please enter a value between 0 and 1,000,000 USDC");
+      }
+
+      if (amount > usdcBalance) {
+        throw new Error("Insufficient USDC balance");
+      }
+
+      toast.loading("Opening credit line...", { id: "stake" });
+
+      const result = await openCreditLine(amount);
+
+      console.log("Credit line opened:", result);
+
+      toast.success(`Successfully opened credit line with ${amount} USDC limit!`, {
+        id: "stake",
+      });
 
       setTransactionStatus("success");
       setStakeAmount("");
+      navigate("/borrow");
+
+      await loadData();
 
       setTimeout(() => setTransactionStatus("idle"), 3000);
     } catch (error: any) {
-      setErrorMessage(error.message || "Failed to open credit line");
+      console.error("Credit line opening error:", error);
+      const userFriendlyError = handleTransactionError(error);
+      setErrorMessage(userFriendlyError);
       setTransactionStatus("error");
-      setTimeout(() => setTransactionStatus("idle"), 5000);
+
+      toast.error(userFriendlyError, { id: "stake" });
+
+      setTimeout(() => {
+        setTransactionStatus("idle");
+        setErrorMessage("");
+      }, 5000);
     }
   };
 
   const handleAddCollateral = async () => {
-    if (!stakeAmount || parseFloat(stakeAmount) <= 0 || !walletAddress) return;
+    if (!stakeAmount || parseFloat(stakeAmount) <= 0 || !account?.address) return;
 
     try {
       setTransactionStatus("staking");
       setErrorMessage("");
 
-      // Mock transaction process
-      toast.success("Adding collateral...");
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const amount = parseFloat(stakeAmount);
+
+      if (!validateUsdcAmount(amount)) {
+        throw new Error("Invalid collateral amount. Please enter a value between 0 and 1,000,000 USDC");
+      }
+
+      if (amount > usdcBalance) {
+        throw new Error("Insufficient USDC balance");
+      }
+
+      toast.loading("Adding collateral...", { id: "stake" });
+
+      const result = await addCollateral(amount);
+
+      console.log("Collateral added:", result);
+
+      toast.success(`Successfully added ${amount} USDC collateral!`, {
+        id: "stake",
+      });
 
       setTransactionStatus("success");
       setStakeAmount("");
 
+      await loadData();
+
       setTimeout(() => setTransactionStatus("idle"), 3000);
     } catch (error: any) {
-      setErrorMessage(error.message || "Failed to add collateral");
+      console.error("Add collateral error:", error);
+      const userFriendlyError = handleTransactionError(error);
+      setErrorMessage(userFriendlyError);
       setTransactionStatus("error");
-      setTimeout(() => setTransactionStatus("idle"), 5000);
+
+      toast.error(userFriendlyError, { id: "stake" });
+
+      setTimeout(() => {
+        setTransactionStatus("idle");
+        setErrorMessage("");
+      }, 5000);
     }
   };
 
   const handleStake = () => {
-    if (!isWalletConnected) {
+    if (!connected || !account?.address) {
+      toast.error("Please connect your wallet first");
       return;
     }
 
-    if (hasExistingCredit) {
+    if (creditLineInfo && creditLineInfo.isActive) {
       handleAddCollateral();
     } else {
       handleOpenCreditLine();
     }
   };
 
+  const loadData = async () => {
+    if (!connected || !account?.address) return;
+
+    setLoading(true);
+    try {
+      const [creditInfo] = await Promise.all([getCreditLineInfo(), getUsdcBalance()]);
+
+      setCreditLineInfo(creditInfo);
+    } catch (error) {
+      console.error("Error loading data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (connected && account?.address) {
+      loadData();
+    }
+  }, [connected, account?.address]);
+
   const calculateCreditLimit = () => {
     if (!stakeAmount || parseFloat(stakeAmount) <= 0) return 0;
-    return parseFloat(stakeAmount) * baseCreditRatio;
+    return parseFloat(stakeAmount) * 1.0;
   };
 
   const isValidAmount = stakeAmount && parseFloat(stakeAmount) > 0 && parseFloat(stakeAmount) <= usdcBalance;
   const isLoading = transactionStatus === "approving" || transactionStatus === "staking";
-  const canStake = isWalletConnected && isValidAmount && !isLoading;
+  const canStake = connected && isValidAmount && !isLoading;
 
-  if (!isWalletConnected) {
+  const hasExistingCredit = creditLineInfo && creditLineInfo.isActive;
+
+  if (!connected) {
     return (
       <div className="min-h-screen bg-black text-white">
         <FloatingOrbs />
 
         <div className="relative z-10 max-w-2xl mx-auto px-4 py-24">
-          <WalletSelector onSelectWallet={handleWalletSelection} selectedWallet={selectedWallet} />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="bg-black/40 backdrop-blur-2xl border border-white/10 rounded-2xl p-8"
+          >
+            <div className="text-center mb-8">
+              <CreditCard className="w-16 h-16 text-orange-400 mx-auto mb-4" />
+              <h2 className="text-2xl font-bold text-white mb-4">Connect Wallet to Continue</h2>
+              <p className="text-gray-400">Connect your wallet to stake collateral and open a credit line</p>
+            </div>
+
+            <div className="space-y-4">
+              <WalletSelector />
+              <LoginWithGoogleButton />
+            </div>
+
+            <div className="mt-6 text-center">
+              <p className="text-xs text-gray-500">Secure connection to manage your credit line</p>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black text-white">
+        <FloatingOrbs />
+
+        <div className="relative z-10 max-w-2xl mx-auto px-4 py-24">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="bg-black/40 backdrop-blur-2xl border border-white/10 rounded-2xl p-8 text-center"
+          >
+            <Loader className="w-12 h-12 text-orange-400 mx-auto mb-4 animate-spin" />
+            <h2 className="text-xl font-bold text-white mb-2">Loading Credit Information...</h2>
+            <p className="text-gray-400">Fetching your credit line status</p>
+          </motion.div>
         </div>
       </div>
     );
@@ -219,10 +349,12 @@ export default function StakeCollateral() {
           <div className="flex items-center gap-2 text-sm text-gray-400">
             <Wallet className="w-4 h-4 text-orange-400" />
             <span className="font-mono">
-              {currentWalletAddress?.slice(0, 6)}...{currentWalletAddress?.slice(-4)}
+              {account?.address
+                ? `${account.address.toString().slice(0, 6)}...${account.address.toString().slice(-4)}`
+                : ""}
             </span>
           </div>
-          <div className="text-xs text-gray-500">Software Wallet</div>
+          <div className="text-xs text-gray-500">Aptos Wallet</div>
         </div>
       </div>
 
@@ -236,10 +368,15 @@ export default function StakeCollateral() {
           <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-orange-200 to-red-200 bg-clip-text text-transparent">
             {hasExistingCredit ? "Add More Collateral" : "Stake USDC as Collateral"}
           </h1>
-          {hasExistingCredit && <p className="text-gray-400 text-lg">Add more USDC to increase your credit limit</p>}
+          <p className="text-gray-400 text-lg">
+            {hasExistingCredit
+              ? "Increase your credit limit by adding more USDC collateral"
+              : "Stake USDC to open your credit line and start borrowing"}
+          </p>
         </motion.div>
 
-        {hasExistingCredit && existingCreditInfo && (
+        {/* Current Credit Line Info */}
+        {hasExistingCredit && creditLineInfo && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -248,231 +385,171 @@ export default function StakeCollateral() {
           >
             <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
               <Info className="w-5 h-5 text-orange-400" />
-              {existingCreditInfo.collateralDeposited > 0 ? "Current Credit Line" : "Active Credit Line"}
+              Current Credit Line
             </h3>
-            {existingCreditInfo.collateralDeposited > 0 ? (
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <div className="text-gray-400 text-sm">Collateral Deposited</div>
-                  <div className="text-xl font-bold text-white">
-                    ${existingCreditInfo.collateralDeposited.toFixed(2)}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-gray-400 text-sm">Credit Limit</div>
-                  <div className="text-xl font-bold text-orange-400">${existingCreditInfo.creditLimit.toFixed(2)}</div>
-                </div>
-                <div>
-                  <div className="text-gray-400 text-sm">Amount Borrowed</div>
-                  <div className="text-xl font-bold text-red-400">${existingCreditInfo.borrowedAmount.toFixed(2)}</div>
-                </div>
-                <div>
-                  <div className="text-gray-400 text-sm">Available Credit</div>
-                  <div className="text-xl font-bold text-green-400">
-                    ${(existingCreditInfo.creditLimit - existingCreditInfo.borrowedAmount).toFixed(2)}
-                  </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <div className="text-gray-400 text-sm">Credit Limit</div>
+                <div className="text-xl font-bold text-orange-400">${creditLineInfo.creditLimit.toFixed(2)}</div>
+              </div>
+              <div>
+                <div className="text-gray-400 text-sm">Available Credit</div>
+                <div className="text-xl font-bold text-green-400">${creditLineInfo.availableCredit.toFixed(2)}</div>
+              </div>
+              <div>
+                <div className="text-gray-400 text-sm">Current Debt</div>
+                <div className="text-xl font-bold text-red-400">${creditLineInfo.currentDebt.toFixed(2)}</div>
+              </div>
+              <div>
+                <div className="text-gray-400 text-sm">Status</div>
+                <div className="text-xl font-bold text-green-400">
+                  {creditLineInfo.isActive ? "Active" : "Inactive"}
                 </div>
               </div>
-            ) : (
+            </div>
+          </motion.div>
+        )}
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="bg-black/20 backdrop-blur-2xl border border-white/10 rounded-2xl p-8"
+        >
+          <div className="mb-8">
+            <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-6 focus-within:border-orange-500/50 transition-all duration-300">
+              <div className="flex items-center justify-between mb-4">
+                <input
+                  value={stakeAmount}
+                  onChange={(e) => setStakeAmount(e.target.value)}
+                  placeholder="0.00"
+                  type="number"
+                  step="0.000001"
+                  min="0"
+                  className="bg-transparent text-4xl font-bold text-white placeholder-gray-500 focus:outline-none w-full"
+                />
+                <div className="flex items-center gap-3">
+                  <span className="text-xl text-gray-400">USDC</span>
+                  <button
+                    onClick={() => setStakeAmount(usdcBalance.toString())}
+                    className="px-3 py-1 bg-orange-500/20 backdrop-blur-sm border border-orange-500/50 rounded-lg text-orange-400 hover:text-orange-300 transition-colors duration-300 text-sm font-medium"
+                  >
+                    MAX
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center mt-3 px-2">
+              <span className="text-gray-400 text-sm">Balance: {usdcBalance.toFixed(2)} USDC</span>
+            </div>
+          </div>
+
+          {/* Credit Limit Preview */}
+          {stakeAmount && parseFloat(stakeAmount) > 0 && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+              className="bg-black/40 backdrop-blur-sm border border-orange-500/30 rounded-xl p-6 mb-8"
+            >
               <div className="text-center">
                 <div className="text-gray-400 text-sm mb-2">
-                  You have an active credit line but no collateral deposited
+                  {hasExistingCredit ? "Additional Credit Limit" : "Credit Limit"}
                 </div>
-                <div className="text-lg font-medium text-yellow-400">
-                  Add collateral below to increase your credit limit
+                <div className="text-3xl font-bold text-transparent bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text">
+                  ${calculateCreditLimit().toFixed(2)}
                 </div>
-              </div>
-            )}
-          </motion.div>
-        )}
-
-        {!isWalletConnected ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="bg-black/40 backdrop-blur-2xl border border-white/10 rounded-2xl p-8 text-center"
-          >
-            <Loader className="w-12 h-12 text-purple-400 mx-auto mb-4 animate-spin" />
-            <h2 className="text-xl font-bold text-white mb-2">Detecting Wallet Connection...</h2>
-            <p className="text-gray-400 mb-4">Please wait while we check your wallet status</p>
-            <button
-              onClick={() => setAuthenticated(true)} // Skip wallet detection for demo
-              className="text-sm text-gray-500 hover:text-gray-400 transition-colors duration-300"
-            >
-              Skip and continue
-            </button>
-          </motion.div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="bg-black/20 backdrop-blur-2xl border border-white/10 rounded-2xl p-8"
-          >
-            <div className="mb-8">
-              <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-6 focus-within:border-orange-500/50 transition-all duration-300">
-                <div className="flex items-center justify-between mb-4">
-                  <input
-                    value={stakeAmount}
-                    onChange={(e) => setStakeAmount(e.target.value)}
-                    placeholder="0.00"
-                    className="bg-transparent text-4xl font-bold text-white placeholder-gray-500 focus:outline-none w-full"
-                  />
-                  <div className="flex items-center gap-3">
-                    <span className="text-xl text-gray-400">USDC</span>
-                    <button
-                      onClick={() => setStakeAmount(usdcBalance.toString())}
-                      className="px-3 py-1 bg-orange-500/20 backdrop-blur-sm border border-orange-500/50 rounded-lg text-orange-400 hover:text-orange-300 transition-colors duration-300 text-sm font-medium"
-                    >
-                      MAX
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex justify-between items-center mt-3 px-2">
-                <span className="text-gray-400 text-sm">Balance: {usdcBalance.toFixed(2)} USDC</span>
-                {false && <span className="text-yellow-400 text-sm">Will require approval</span>}
-              </div>
-            </div>
-
-            {stakeAmount && parseFloat(stakeAmount) > 0 && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3 }}
-                className="bg-black/40 backdrop-blur-sm border border-orange-500/30 rounded-xl p-6 mb-8"
-              >
-                <div className="text-center">
-                  <div className="text-gray-400 text-sm mb-2">
-                    {hasExistingCredit ? "Additional Credit" : "Credit Limit"}
-                  </div>
-                  <div className="text-3xl font-bold text-transparent bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text">
-                    ${calculateCreditLimit().toFixed(2)}
-                  </div>
-                  {hasExistingCredit && existingCreditInfo && (
-                    <div className="mt-2 text-gray-400 text-sm">
-                      New Total: ${(existingCreditInfo.creditLimit + calculateCreditLimit()).toFixed(2)}
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            )}
-
-            {hasExistingCredit && authenticated && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3, delay: 0.1 }}
-                className="bg-black/40 backdrop-blur-sm border border-orange-500/30 rounded-xl p-6 mb-8"
-              >
-                <h4 className="text-white font-medium mb-4 flex items-center gap-2">
-                  <Info className="w-4 h-4 text-orange-400" />
-                  Reputation & Credit Increases
-                </h4>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <div className="text-gray-400">Reputation Score</div>
-                    <div className="text-lg font-bold text-orange-400">{reputationScore}/1000</div>
-                  </div>
-                  <div>
-                    <div className="text-gray-400">Credit Increase Eligible</div>
-                    <div
-                      className={`text-lg font-bold ${creditIncreaseEligibility.eligible ? "text-green-400" : "text-red-400"}`}
-                    >
-                      {creditIncreaseEligibility.eligible ? "Yes" : "No"}
-                    </div>
-                  </div>
-                </div>
-                {creditIncreaseEligibility.eligible && (
-                  <div className="mt-3 p-3 bg-green-500/10 backdrop-blur-sm border border-green-500/20 rounded-lg">
-                    <div className="text-green-400 text-sm font-medium">
-                      🎉 Eligible for credit increase to ${creditIncreaseEligibility.newLimit.toFixed(2)}
-                    </div>
+                {hasExistingCredit && creditLineInfo && (
+                  <div className="mt-2 text-gray-400 text-sm">
+                    New Total: ${(creditLineInfo.creditLimit + calculateCreditLimit()).toFixed(2)}
                   </div>
                 )}
-                <div className="mt-3 text-xs text-gray-500">
-                  Credit multipliers (1.2x) are automatically applied after good repayment history
-                </div>
-              </motion.div>
-            )}
+              </div>
+            </motion.div>
+          )}
 
-            <div className="text-center text-gray-400 text-sm mb-8 leading-relaxed">
-              {hasExistingCredit
-                ? "Adding more USDC will increase your credit limit at a 1:1 ratio. Credit multipliers are earned through good repayment history."
-                : "Your staked USDC secures your credit line at a 1:1 ratio (100% of collateral)."}
+          <div className="text-center text-gray-400 text-sm mb-8 leading-relaxed">
+            {hasExistingCredit
+              ? "Adding more USDC will increase your credit limit at a 1:1 ratio."
+              : "Your staked USDC secures your credit line at a 1:1 ratio (100% collateral backing)."}
+          </div>
+
+          <GlowingButton onClick={handleStake} className="w-full text-xl py-6" disabled={!canStake}>
+            {transactionStatus === "staking" ? (
+              <>
+                <Loader className="w-6 h-6 animate-spin" />
+                {hasExistingCredit ? "Adding Collateral..." : "Opening Credit Line..."}
+              </>
+            ) : transactionStatus === "success" ? (
+              <>
+                <CheckCircle className="w-6 h-6" />
+                {hasExistingCredit ? "Collateral Added!" : "Credit Line Opened!"}
+              </>
+            ) : hasExistingCredit ? (
+              <>
+                <Plus className="w-6 h-6" />
+                Add Collateral
+              </>
+            ) : (
+              <>
+                <DollarSign className="w-6 h-6" />
+                Open Credit Line
+              </>
+            )}
+          </GlowingButton>
+
+          {/* Transaction Status Messages */}
+          {transactionStatus === "error" && errorMessage && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-red-500/10 backdrop-blur-sm border border-red-500/50 rounded-xl p-4 flex items-center gap-3 mt-6"
+            >
+              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+              <div>
+                <div className="text-red-400 font-medium">Transaction Failed</div>
+                <div className="text-red-300 text-sm">{errorMessage}</div>
+              </div>
+            </motion.div>
+          )}
+
+          {transactionStatus === "success" && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-green-500/10 backdrop-blur-sm border border-green-500/50 rounded-xl p-4 flex items-center gap-3 mt-6"
+            >
+              <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
+              <div>
+                <div className="text-green-400 font-medium">
+                  {hasExistingCredit ? "Collateral Added Successfully!" : "Credit Line Opened!"}
+                </div>
+                <div className="text-green-300 text-sm">
+                  {hasExistingCredit
+                    ? "Your credit limit has been increased."
+                    : "You can now start borrowing against your collateral."}
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Contract Info */}
+          <div className="mt-6 p-4 bg-blue-500/10 backdrop-blur-sm border border-blue-500/20 rounded-xl">
+            <div className="flex items-start gap-3">
+              <Info className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
+              <div className="text-sm text-gray-300">
+                <p className="font-medium text-blue-400 mb-1">How it works:</p>
+                <ul className="space-y-1 text-xs">
+                  <li>• Your USDC is locked as collateral in the smart contract</li>
+                  <li>• Credit limit equals collateral amount (1:1 ratio)</li>
+                  <li>• You can borrow up to your credit limit</li>
+                  <li>• Add more collateral anytime to increase your limit</li>
+                </ul>
+              </div>
             </div>
-
-            <GlowingButton onClick={handleStake} className="w-full text-xl py-6" disabled={!canStake}>
-              {transactionStatus === "approving" ? (
-                <>
-                  <Loader className="w-6 h-6 animate-spin" />
-                  Approving USDC...
-                </>
-              ) : transactionStatus === "staking" ? (
-                <>
-                  <Loader className="w-6 h-6 animate-spin" />
-                  {hasExistingCredit ? "Adding Collateral..." : "Opening Credit Line..."}
-                </>
-              ) : transactionStatus === "success" ? (
-                <>
-                  <CheckCircle className="w-6 h-6" />
-                  {hasExistingCredit ? "Collateral Added!" : "Credit Line Opened!"}
-                </>
-              ) : !isWalletConnected ? (
-                <>
-                  Connect Wallet
-                  <Wallet className="w-6 h-6" />
-                </>
-              ) : hasExistingCredit ? (
-                <>
-                  {existingCreditInfo?.collateralDeposited > 0 ? "Add More Collateral" : "Add Initial Collateral"}
-                  <Plus className="w-6 h-6" />
-                </>
-              ) : (
-                <>
-                  Open Credit Line
-                  <DollarSign className="w-6 h-6" />
-                </>
-              )}
-            </GlowingButton>
-
-            {transactionStatus === "error" && errorMessage && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-red-500/10 backdrop-blur-sm border border-red-500/50 rounded-xl p-4 flex items-center gap-3 mt-6"
-              >
-                <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
-                <div>
-                  <div className="text-red-400 font-medium">Transaction Failed</div>
-                  <div className="text-red-300 text-sm">{errorMessage}</div>
-                </div>
-              </motion.div>
-            )}
-
-            {transactionStatus === "success" && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-green-500/10 backdrop-blur-sm border border-green-500/50 rounded-xl p-4 flex items-center gap-3 mt-6"
-              >
-                <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-                <div>
-                  <div className="text-green-400 font-medium">
-                    {hasExistingCredit ? "Collateral Added Successfully!" : "Stake"}
-                  </div>
-                  <div className="text-green-300 text-sm">
-                    {hasExistingCredit
-                      ? "Your credit limit has been increased."
-                      : "You can now borrow against your collateral."}
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </motion.div>
-        )}
+          </div>
+        </motion.div>
       </div>
     </div>
   );
