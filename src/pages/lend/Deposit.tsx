@@ -3,6 +3,7 @@ import { AlertCircle, ArrowRight, CheckCircle, DollarSign, Info, Loader, Wallet 
 import { useState } from "react";
 import { FloatingOrbs } from "../../components/FloatingOrbs";
 import { GlowingButton } from "../../components/GlowingButton";
+import { WalletSelector } from "../../components/WalletSelector";
 
 type LockupPeriod = {
   months: number;
@@ -145,10 +146,7 @@ export default function Deposit() {
             <p className="text-gray-400 mb-6">
               Connect your wallet to deposit tokens and start earning competitive yields
             </p>
-            <GlowingButton onClick={handleConnect} className="text-lg px-8 py-4">
-              Connect Wallet
-              <ArrowRight className="w-5 h-5" />
-            </GlowingButton>
+<WalletSelector/>
           </motion.div>
         ) : (
           <motion.div

@@ -2,6 +2,7 @@ import { Menu } from "lucide-react";
 import { useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Sidebar } from "../../components/Navigation/LendSidebar";
+import { WalletSelector } from "../../components/WalletSelector";
 
 export default function LendLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -29,6 +30,9 @@ export default function LendLayout() {
 
   return (
     <div className="min-h-screen bg-black text-white">
+      <div className="fixed top-6 right-6 z-50">
+      <WalletSelector />
+      </div>
       <button
         onClick={handleMenuToggle}
         className="fixed top-6 left-6 z-50 lg:hidden bg-black/40 backdrop-blur-xl border border-orange-500/20 rounded-xl p-3 text-gray-400 hover:text-white transition-all duration-300 hover:border-orange-500/40"

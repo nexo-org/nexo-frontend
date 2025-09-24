@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronRight, DollarSign, Menu, PieChart, Wallet, X } from "lucide-react";
 import { useState } from "react";
+import { WalletSelector } from "../WalletSelector";
 
 type SidebarProps = {
   activeTab: string;
@@ -230,7 +231,7 @@ export const AppBar = ({ isWalletConnected, onWalletConnect, onMenuToggle }: App
       className="bg-black/80 backdrop-blur-xl border-b border-orange-500/20 sticky top-0 z-30"
     >
       <div className="px-6 py-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center">
           <div className="flex items-center gap-4">
             <button
               onClick={onMenuToggle}
@@ -249,35 +250,6 @@ export const AppBar = ({ isWalletConnected, onWalletConnect, onMenuToggle }: App
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            {isWalletConnected ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="flex items-center gap-3 bg-gradient-to-r from-orange-500/20 to-amber-500/20 border border-orange-500/50 rounded-xl px-4 py-2"
-              >
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                <div className="hidden sm:block">
-                  <div className="text-sm font-medium text-white">Connected</div>
-                  <div className="text-xs text-gray-400">{walletAddress}</div>
-                </div>
-                <Wallet className="w-5 h-5 text-orange-400" />
-              </motion.div>
-            ) : (
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={onWalletConnect}
-                className="relative group bg-gradient-to-r from-orange-500 to-amber-500 text-white px-6 py-2 rounded-xl font-medium transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/40"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-amber-500/20 rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <span className="relative flex items-center gap-2">
-                  Connect Wallet
-                  <Wallet className="w-4 h-4" />
-                </span>
-              </motion.button>
-            )}
-          </div>
         </div>
       </div>
     </motion.div>
