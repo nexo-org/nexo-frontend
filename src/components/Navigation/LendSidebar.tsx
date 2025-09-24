@@ -1,6 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronRight, DollarSign, Menu, PieChart, Wallet, X } from "lucide-react";
-import { useState } from "react";
 
 type SidebarProps = {
   activeTab: string;
@@ -44,11 +43,7 @@ export const Sidebar = ({ activeTab, onTabChange, isOpen, onToggle }: SidebarPro
           <div className="p-6 border-b border-orange-500/20">
             <div className="flex items-center justify-center">
               <a href="/" className="flex items-center gap-3">
-                <img
-                  src="/logo.png"
-                  alt="Logo"
-                  className="w-12 h-12 flex items-center justify-center"
-                />
+                <img src="/logo.png" alt="Logo" className="w-12 h-12 flex items-center justify-center" />
                 <span className="text-xl font-bold bg-gradient-to-r from-white to-orange-200 bg-clip-text text-transparent">
                   Nexo
                 </span>
@@ -156,7 +151,7 @@ export const Sidebar = ({ activeTab, onTabChange, isOpen, onToggle }: SidebarPro
                     whileTap={{ scale: 0.98 }}
                     onClick={() => {
                       onTabChange(item.id);
-                      onToggle(); 
+                      onToggle();
                     }}
                     className={`w-full group relative overflow-hidden rounded-xl p-4 transition-all duration-300 ${
                       isActive
@@ -219,9 +214,7 @@ type AppBarProps = {
   onMenuToggle: () => void;
 };
 
-export const AppBar = ({ isWalletConnected, onWalletConnect, onMenuToggle }: AppBarProps) => {
-  const [walletAddress] = useState("0x4f2a...8c3d");
-
+export const AppBar = ({ onMenuToggle }: AppBarProps) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: -20 }}
@@ -248,7 +241,6 @@ export const AppBar = ({ isWalletConnected, onWalletConnect, onMenuToggle }: App
               </span>
             </div>
           </div>
-
         </div>
       </div>
     </motion.div>
