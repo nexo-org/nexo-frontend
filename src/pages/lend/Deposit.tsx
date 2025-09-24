@@ -7,7 +7,14 @@ import { FloatingOrbs } from "../../components/FloatingOrbs";
 import { GlowingButton } from "../../components/GlowingButton";
 import LoginWithGoogleButton from "../../components/LoginWithGoogleButton";
 import { WalletSelector } from "../../components/WalletSelector";
-import { CONTRACT_ADDRESS, fetchUsdcBalance, unitsToUsdc, usdcToUnits } from "../../context/WalletProvider";
+import {
+  CONTRACT_ADDRESS,
+  fetchUsdcBalance,
+  handleTransactionError,
+  unitsToUsdc,
+  usdcToUnits,
+  validateUsdcAmount,
+} from "../../lib/contractUtils";
 
 type LockupPeriod = {
   months: number;
@@ -78,19 +85,8 @@ export default function Deposit() {
 
   const { account, connected, signAndSubmitTransaction } = useWallet();
 
-  const handleTransactionError = (error: any) => {
-    const errorMessage = error.message || error.toString();
-
-    if (errorMessage.includes("EINSUFFICIENT_BALANCE")) {
-      return "Insufficient USDC balance for this transaction";
-    }
-    if (errorMessage.includes("INVALID_AMOUNT")) {
-      return "Please enter a valid deposit amount";
-    }
-    if (errorMessage.includes("NOT_AUTHORIZED")) {
-      return "Transaction not authorized. Please try again.";
-    }
-    return "Transaction failed. Please try again.";
+  const handleTransactionErrorLocal = (error: any) => {
+    return handleTransactionError(error);
   };
 
   const getUsdcBalance = async () => {
@@ -172,8 +168,8 @@ export default function Deposit() {
 
     const amount = parseFloat(depositAmount);
 
-    if (amount > 1000000) {
-      toast.error("Deposit amount too large. Maximum is 1,000,000 USDC");
+    if (!validateUsdcAmount(amount)) {
+      toast.error("Invalid deposit amount. Please enter a value between 0 and 1,000,000 USDC");
       return;
     }
 
@@ -205,7 +201,7 @@ export default function Deposit() {
       setTimeout(() => setTransactionStatus("idle"), 3000);
     } catch (error: any) {
       console.error("Deposit error:", error);
-      const userFriendlyError = handleTransactionError(error);
+      const userFriendlyError = handleTransactionErrorLocal(error);
       setErrorMessage(userFriendlyError);
       setTransactionStatus("error");
 
