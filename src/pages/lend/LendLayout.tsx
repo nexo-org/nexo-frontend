@@ -1,6 +1,7 @@
 import { Menu } from "lucide-react";
 import { useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import LoginWithGoogleButton from "../../components/LoginWithGoogleButton";
 import { Sidebar } from "../../components/Navigation/LendSidebar";
 import { WalletSelector } from "../../components/WalletSelector";
 
@@ -30,15 +31,16 @@ export default function LendLayout() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <div className="fixed top-6 right-6 z-50">
-      <WalletSelector />
+      <div className="fixed top-6 right-6 z-50 flex flex-row gap-2">
+        <WalletSelector />
+        <LoginWithGoogleButton />
       </div>
       <button
         onClick={handleMenuToggle}
         className="fixed top-6 left-6 z-50 lg:hidden bg-black/40 backdrop-blur-xl border border-orange-500/20 rounded-xl p-3 text-gray-400 hover:text-white transition-all duration-300 hover:border-orange-500/40"
         style={{
-          background: 'rgba(0, 0, 0, 0.4)',
-          backdropFilter: 'blur(20px)',
+          background: "rgba(0, 0, 0, 0.4)",
+          backdropFilter: "blur(20px)",
         }}
       >
         <Menu className="w-6 h-6" />

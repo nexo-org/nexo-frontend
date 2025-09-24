@@ -1,8 +1,10 @@
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { motion } from "framer-motion";
-import { AlertCircle, ArrowRight, CheckCircle, DollarSign, Info, Loader, Wallet } from "lucide-react";
+import { CheckCircle, DollarSign, Info, Loader, Wallet } from "lucide-react";
 import { useState } from "react";
 import { FloatingOrbs } from "../../components/FloatingOrbs";
 import { GlowingButton } from "../../components/GlowingButton";
+import LoginWithGoogleButton from "../../components/LoginWithGoogleButton";
 import { WalletSelector } from "../../components/WalletSelector";
 
 type LockupPeriod = {
@@ -63,7 +65,7 @@ export default function Deposit() {
     label: "3 months",
   });
   const [transactionStatus, setTransactionStatus] = useState<"idle" | "depositing" | "success" | "error">("idle");
-  const [isConnected, setIsConnected] = useState(false);
+  const { account, connected, disconnect, wallet } = useWallet();
 
   // Mock data
   const tokenData = {
@@ -73,13 +75,8 @@ export default function Deposit() {
     apy: 12.5,
   };
 
-  const handleConnect = () => {
-    setIsConnected(true);
-  };
-
   const handleDeposit = async () => {
-    if (!isConnected) {
-      handleConnect();
+    if (!connected) {
       return;
     }
 
@@ -110,7 +107,7 @@ export default function Deposit() {
   };
 
   const isLoading = transactionStatus === "depositing";
-  const canDeposit = isConnected && depositAmount && parseFloat(depositAmount) > 0 && !isLoading;
+  const canDeposit = connected && depositAmount && parseFloat(depositAmount) > 0 && !isLoading;
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -129,16 +126,16 @@ export default function Deposit() {
           <p className="text-gray-400 text-lg">Lock your tokens for higher yields and bonus rewards</p>
         </motion.div>
 
-        {!isConnected ? (
+        {!connected ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="bg-black/40 backdrop-blur-xl border border-orange-500/20 rounded-2xl p-8 text-center"
             style={{
-              background: 'rgba(0, 0, 0, 0.4)',
-              backdropFilter: 'blur(20px)',
-              boxShadow: '0 8px 32px rgba(249, 115, 22, 0.1), inset 0 1px 0 rgba(249, 115, 22, 0.2)'
+              background: "rgba(0, 0, 0, 0.4)",
+              backdropFilter: "blur(20px)",
+              boxShadow: "0 8px 32px rgba(249, 115, 22, 0.1), inset 0 1px 0 rgba(249, 115, 22, 0.2)",
             }}
           >
             <Wallet className="w-16 h-16 text-orange-400 mx-auto mb-4" />
@@ -146,7 +143,10 @@ export default function Deposit() {
             <p className="text-gray-400 mb-6">
               Connect your wallet to deposit tokens and start earning competitive yields
             </p>
-<WalletSelector/>
+            <div className="w-full flex flex-row gap-2 justify-center">
+              <WalletSelector />
+              <LoginWithGoogleButton />
+            </div>
           </motion.div>
         ) : (
           <motion.div
@@ -155,9 +155,9 @@ export default function Deposit() {
             transition={{ duration: 0.6 }}
             className="bg-black/40 backdrop-blur-xl border border-orange-500/20 rounded-2xl p-8 space-y-8"
             style={{
-              background: 'rgba(0, 0, 0, 0.4)',
-              backdropFilter: 'blur(20px)',
-              boxShadow: '0 8px 32px rgba(249, 115, 22, 0.1), inset 0 1px 0 rgba(249, 115, 22, 0.2)'
+              background: "rgba(0, 0, 0, 0.4)",
+              backdropFilter: "blur(20px)",
+              boxShadow: "0 8px 32px rgba(249, 115, 22, 0.1), inset 0 1px 0 rgba(249, 115, 22, 0.2)",
             }}
           >
             <div>

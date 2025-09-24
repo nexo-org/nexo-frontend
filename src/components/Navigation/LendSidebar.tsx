@@ -1,7 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronRight, DollarSign, Menu, PieChart, Wallet, X } from "lucide-react";
 import { useState } from "react";
-import { WalletSelector } from "../WalletSelector";
 
 type SidebarProps = {
   activeTab: string;

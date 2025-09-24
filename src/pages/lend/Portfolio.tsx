@@ -1,3 +1,4 @@
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { motion } from "framer-motion";
 import {
   Activity,
@@ -10,9 +11,9 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
-import { useState } from "react";
 import { FloatingOrbs } from "../../components/FloatingOrbs";
 import { GlowingButton } from "../../components/GlowingButton";
+import LoginWithGoogleButton from "../../components/LoginWithGoogleButton";
 import { WalletSelector } from "../../components/WalletSelector";
 
 type StatCardProps = {
@@ -24,14 +25,7 @@ type StatCardProps = {
   className?: string;
 };
 
-const StatCard = ({
-  title,
-  value,
-  subtitle,
-  icon: Icon,
-  trend,
-  className = "",
-}: StatCardProps) => {
+const StatCard = ({ title, value, subtitle, icon: Icon, trend, className = "" }: StatCardProps) => {
   return (
     <motion.div
       whileHover={{ scale: 1.02 }}
@@ -39,8 +33,7 @@ const StatCard = ({
       style={{
         background: "rgba(0, 0, 0, 0.4)",
         backdropFilter: "blur(20px)",
-        boxShadow:
-          "0 8px 32px rgba(249, 115, 22, 0.05), inset 0 1px 0 rgba(249, 115, 22, 0.1)",
+        boxShadow: "0 8px 32px rgba(249, 115, 22, 0.05), inset 0 1px 0 rgba(249, 115, 22, 0.1)",
       }}
     >
       <div className="flex items-center justify-between mb-4">
@@ -48,11 +41,7 @@ const StatCard = ({
           <Icon className="w-5 h-5 text-white" />
         </div>
         {trend && (
-          <div
-            className={`flex items-center gap-1 text-sm ${
-              trend > 0 ? "text-green-400" : "text-red-400"
-            }`}
-          >
+          <div className={`flex items-center gap-1 text-sm ${trend > 0 ? "text-green-400" : "text-red-400"}`}>
             <TrendingUp className="w-4 h-4" />
             <span>
               {trend > 0 ? "+" : ""}
@@ -94,17 +83,8 @@ const PortfolioOverview = () => {
         icon={TrendingUp}
         trend={8.2}
       />
-      <StatCard
-        title="Current APY"
-        value={`${portfolioData.currentAPY}%`}
-        icon={Target}
-        trend={2.1}
-      />
-      <StatCard
-        title="Active Positions"
-        value={portfolioData.activePositions.toString()}
-        icon={PieChart}
-      />
+      <StatCard title="Current APY" value={`${portfolioData.currentAPY}%`} icon={Target} trend={2.1} />
+      <StatCard title="Active Positions" value={portfolioData.activePositions.toString()} icon={PieChart} />
     </div>
   );
 };
@@ -151,8 +131,7 @@ const ActivePositions = () => {
       style={{
         background: "rgba(0, 0, 0, 0.4)",
         backdropFilter: "blur(20px)",
-        boxShadow:
-          "0 8px 32px rgba(249, 115, 22, 0.1), inset 0 1px 0 rgba(249, 115, 22, 0.2)",
+        boxShadow: "0 8px 32px rgba(249, 115, 22, 0.1), inset 0 1px 0 rgba(249, 115, 22, 0.2)",
       }}
     >
       <div className="flex items-center justify-between mb-6">
@@ -169,16 +148,9 @@ const ActivePositions = () => {
           <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
             <PieChart className="w-8 h-8 text-gray-400" />
           </div>
-          <h3 className="text-lg font-semibold text-white mb-2">
-            No Active Positions
-          </h3>
-          <p className="text-gray-400 mb-6">
-            Start lending to see your positions here
-          </p>
-          <GlowingButton
-            onClick={() => (window.location.href = "/lend/deposit")}
-            className="text-sm"
-          >
+          <h3 className="text-lg font-semibold text-white mb-2">No Active Positions</h3>
+          <p className="text-gray-400 mb-6">Start lending to see your positions here</p>
+          <GlowingButton onClick={() => (window.location.href = "/lend/deposit")} className="text-sm">
             Start Lending
             <ArrowRight className="w-4 h-4" />
           </GlowingButton>
@@ -194,9 +166,7 @@ const ActivePositions = () => {
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full flex items-center justify-center shadow-lg shadow-orange-500/30">
-                    <span className="text-white font-bold text-sm">
-                      {position.token}
-                    </span>
+                    <span className="text-white font-bold text-sm">{position.token}</span>
                   </div>
                   <div>
                     <div className="text-white font-semibold">
@@ -206,33 +176,23 @@ const ActivePositions = () => {
                         maximumFractionDigits: 2,
                       })}
                     </div>
-                    <div className="text-gray-400 text-sm">
-                      {position.token}
-                    </div>
+                    <div className="text-gray-400 text-sm">{position.token}</div>
                   </div>
                 </div>
 
                 <div className="text-center md:text-left">
-                  <div className="text-orange-400 font-semibold">
-                    {position.apy}% APY
-                  </div>
-                  <div className="text-gray-400 text-sm">
-                    {position.lockupPeriod}
-                  </div>
+                  <div className="text-orange-400 font-semibold">{position.apy}% APY</div>
+                  <div className="text-gray-400 text-sm">{position.lockupPeriod}</div>
                 </div>
 
                 <div className="text-center md:text-left">
-                  <div className="text-white font-semibold">
-                    ${position.earned.toFixed(2)}
-                  </div>
+                  <div className="text-white font-semibold">${position.earned.toFixed(2)}</div>
                   <div className="text-gray-400 text-sm">Earned</div>
                 </div>
 
                 <div className="flex items-center justify-center md:justify-end gap-2">
                   <CheckCircle className="w-4 h-4 text-green-400" />
-                  <span className="text-green-400 text-sm">
-                    {position.timeRemaining}
-                  </span>
+                  <span className="text-green-400 text-sm">{position.timeRemaining}</span>
                 </div>
               </div>
             </motion.div>
@@ -260,14 +220,11 @@ const PoolStats = () => {
       style={{
         background: "rgba(0, 0, 0, 0.4)",
         backdropFilter: "blur(20px)",
-        boxShadow:
-          "0 8px 32px rgba(249, 115, 22, 0.1), inset 0 1px 0 rgba(249, 115, 22, 0.2)",
+        boxShadow: "0 8px 32px rgba(249, 115, 22, 0.1), inset 0 1px 0 rgba(249, 115, 22, 0.2)",
       }}
     >
       <div className="flex items-center gap-3 mb-6">
-        <h2 className="text-2xl font-bold text-white">
-          Pool Health & Statistics
-        </h2>
+        <h2 className="text-2xl font-bold text-white">Pool Health & Statistics</h2>
         <div className="flex items-center gap-1 text-green-400">
           <CheckCircle className="w-5 h-5" />
           <span className="text-sm font-medium">{poolData.riskLevel} Risk</span>
@@ -278,9 +235,7 @@ const PoolStats = () => {
       <div className="bg-black/30 backdrop-blur-sm border border-orange-500/10 rounded-xl p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
           <span className="text-gray-400 font-medium">Pool Utilization</span>
-          <span className="text-2xl font-bold text-orange-400">
-            {poolData.utilization.toFixed(1)}%
-          </span>
+          <span className="text-2xl font-bold text-orange-400">{poolData.utilization.toFixed(1)}%</span>
         </div>
         <div className="w-full bg-gray-700 rounded-full h-3">
           <div
@@ -289,12 +244,8 @@ const PoolStats = () => {
           />
         </div>
         <div className="flex justify-between mt-2 text-sm text-gray-400">
-          <span>
-            Total Borrowed: ${poolData.totalBorrowed.toLocaleString()}
-          </span>
-          <span>
-            Total Supplied: ${poolData.totalSupplied.toLocaleString()}
-          </span>
+          <span>Total Borrowed: ${poolData.totalBorrowed.toLocaleString()}</span>
+          <span>Total Supplied: ${poolData.totalSupplied.toLocaleString()}</span>
         </div>
       </div>
 
@@ -302,32 +253,17 @@ const PoolStats = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatCard
           title="Available Liquidity"
-          value={`$${(
-            poolData.totalSupplied - poolData.totalBorrowed
-          ).toLocaleString()}`}
+          value={`$${(poolData.totalSupplied - poolData.totalBorrowed).toLocaleString()}`}
           icon={Users}
         />
-        <StatCard
-          title="Avg. Collateral Ratio"
-          value={`${poolData.avgCollateralRatio}%`}
-          icon={Shield}
-        />
-        <StatCard
-          title="Risk Level"
-          value={poolData.riskLevel}
-          subtitle="Well collateralized"
-          icon={Activity}
-        />
+        <StatCard title="Avg. Collateral Ratio" value={`${poolData.avgCollateralRatio}%`} icon={Shield} />
+        <StatCard title="Risk Level" value={poolData.riskLevel} subtitle="Well collateralized" icon={Activity} />
       </div>
     </div>
   );
 };
 
-type UnauthorizedViewProps = {
-  onLogin: () => void;
-};
-
-const UnauthorizedView = ({ onLogin }: UnauthorizedViewProps) => {
+const UnauthorizedView = () => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -337,8 +273,7 @@ const UnauthorizedView = ({ onLogin }: UnauthorizedViewProps) => {
       style={{
         background: "rgba(0, 0, 0, 0.4)",
         backdropFilter: "blur(20px)",
-        boxShadow:
-          "0 8px 32px rgba(249, 115, 22, 0.1), inset 0 1px 0 rgba(249, 115, 22, 0.2)",
+        boxShadow: "0 8px 32px rgba(249, 115, 22, 0.1), inset 0 1px 0 rgba(249, 115, 22, 0.2)",
       }}
     >
       <div className="max-w-md mx-auto">
@@ -346,14 +281,11 @@ const UnauthorizedView = ({ onLogin }: UnauthorizedViewProps) => {
           <PieChart className="w-10 h-10 text-white" />
         </div>
 
-        <h2 className="text-3xl font-bold text-white mb-4">
-          View Your Portfolio
-        </h2>
+        <h2 className="text-3xl font-bold text-white mb-4">View Your Portfolio</h2>
 
         <p className="text-gray-400 mb-8 leading-relaxed">
-          Connect your wallet to access your complete portfolio dashboard with
-          real-time tracking of your lending positions, earnings, and
-          performance analytics.
+          Connect your wallet to access your complete portfolio dashboard with real-time tracking of your lending
+          positions, earnings, and performance analytics.
         </p>
 
         <div className="space-y-4 mb-8">
@@ -371,18 +303,17 @@ const UnauthorizedView = ({ onLogin }: UnauthorizedViewProps) => {
           </div>
         </div>
 
-        <WalletSelector />
+        <div className="w-full flex flex-row gap-2 justify-center">
+          <WalletSelector />
+          <LoginWithGoogleButton />
+        </div>
       </div>
     </motion.div>
   );
 };
 
 export default function Portfolio() {
-  const [isConnected, setIsConnected] = useState(false);
-
-  const handleConnect = () => {
-    setIsConnected(true);
-  };
+  const { account, connected, disconnect, wallet } = useWallet();
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -405,8 +336,8 @@ export default function Portfolio() {
         </motion.div>
 
         {/* Main Content */}
-        {!isConnected ? (
-          <UnauthorizedView onLogin={handleConnect} />
+        {!connected ? (
+          <UnauthorizedView />
         ) : (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
