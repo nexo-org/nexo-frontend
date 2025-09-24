@@ -43,7 +43,7 @@ export const Sidebar = ({ activeTab, onTabChange, isOpen, onToggle }: SidebarPro
         <div className="flex flex-col h-full">
           <div className="p-6 border-b border-orange-500/20">
             <div className="flex items-center justify-center">
-              <div className="flex items-center gap-3">
+              <a href="/" className="flex items-center gap-3">
                 <img
                   src="/logo.png"
                   alt="Logo"
@@ -52,7 +52,7 @@ export const Sidebar = ({ activeTab, onTabChange, isOpen, onToggle }: SidebarPro
                 <span className="text-xl font-bold bg-gradient-to-r from-white to-orange-200 bg-clip-text text-transparent">
                   Nexo
                 </span>
-              </div>
+              </a>
             </div>
           </div>
 
