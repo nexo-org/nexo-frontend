@@ -212,7 +212,7 @@ export default function LandingPage() {
       <FloatingOrbs />
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center px-4 mt-20">
+      <section className="relative min-h-screen flex items-center justify-center px-4 mt-40">
         <motion.div
           style={{ opacity }}
           className="absolute inset-0 bg-gradient-to-b from-transparent via-orange-500/5 to-transparent"
