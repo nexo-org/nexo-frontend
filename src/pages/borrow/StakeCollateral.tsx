@@ -58,49 +58,28 @@ export default function StakeCollateral() {
     try {
       console.log(`Fetching credit line info for ${account.address.toString()}`);
 
-      try {
-        const [creditLimit, currentDebt, isActive, lastBorrowTimestamp] = await aptos.view<
-          [string, string, boolean, string]
-        >({
+      // Use the view function from Integration Guide
+      const [collateralDeposited, creditLimit, borrowedAmount, interestAccrued, totalDebt, repaymentDueDate, isActive] =
+        await aptos.view<[string, string, string, string, string, string, boolean]>({
           payload: {
-            function: `${CONTRACT_ADDRESS}::credit_manager::get_credit_line_info`,
+            function: `${CONTRACT_ADDRESS}::credit_manager::get_credit_info`,
             functionArguments: [CONTRACT_ADDRESS, account.address.toString()],
           },
         });
 
-        const creditInfo: CreditLineInfo = {
-          creditLimit: unitsToUsdc(creditLimit),
-          currentDebt: unitsToUsdc(currentDebt),
-          availableCredit: unitsToUsdc(creditLimit) - unitsToUsdc(currentDebt),
-          isActive,
-          lastBorrowTimestamp: parseInt(lastBorrowTimestamp),
-        };
+      const creditLimitUsdc = unitsToUsdc(creditLimit);
+      const currentDebtUsdc = unitsToUsdc(totalDebt);
+      const availableCredit = creditLimitUsdc - currentDebtUsdc;
 
-        console.log("Found credit line via view function:", creditInfo);
-        return creditInfo;
-      } catch (viewError) {
-        console.log("View function failed, trying resource lookup:", viewError);
-
-        try {
-          const resource = await aptos.getAccountResource({
-            accountAddress: account.address.toString(),
-            resourceType: `${CONTRACT_ADDRESS}::credit_manager::CreditLine`,
-          });
-
-          const creditData = resource as any;
-          return {
-            creditLimit: unitsToUsdc(creditData.credit_limit),
-            currentDebt: unitsToUsdc(creditData.current_debt),
-            availableCredit: unitsToUsdc(creditData.credit_limit) - unitsToUsdc(creditData.current_debt),
-            isActive: creditData.is_active,
-            lastBorrowTimestamp: parseInt(creditData.last_borrow_timestamp),
-          };
-        } catch (resourceError) {
-          console.log("Resource lookup failed:", resourceError);
-          return null;
-        }
-      }
-    } catch (error) {
+      return {
+        creditLimit: creditLimitUsdc,
+        currentDebt: currentDebtUsdc,
+        availableCredit: Math.max(0, availableCredit),
+        isActive,
+        lastBorrowTimestamp: parseInt(repaymentDueDate),
+        collateralAmount: unitsToUsdc(collateralDeposited),
+      };
+    } catch (error: any) {
       console.error("Error fetching credit line info:", error);
       return null;
     }
@@ -131,12 +110,10 @@ export default function StakeCollateral() {
       throw new Error("Invalid collateral amount");
     }
 
-    const newCreditLimit = (creditLineInfo?.creditLimit || 0) + collateralAmountUsdc;
-
     const payload: InputTransactionData = {
       data: {
-        function: `${CONTRACT_ADDRESS}::credit_manager::increase_credit_limit`,
-        functionArguments: [CONTRACT_ADDRESS, usdcToUnits(newCreditLimit)],
+        function: `${CONTRACT_ADDRESS}::credit_manager::add_collateral`,
+        functionArguments: [CONTRACT_ADDRESS, usdcToUnits(collateralAmountUsdc)],
       },
     };
 
@@ -259,7 +236,11 @@ export default function StakeCollateral() {
 
     setLoading(true);
     try {
-      const [creditInfo] = await Promise.all([getCreditLineInfo(), getUsdcBalance()]);
+      // Get USDC balance first
+      await getUsdcBalance();
+
+      // Then try to get credit line info - this might be null for new users
+      const creditInfo = await getCreditLineInfo();
 
       setCreditLineInfo(creditInfo);
     } catch (error) {
@@ -528,7 +509,7 @@ export default function StakeCollateral() {
                 <div className="text-green-300 text-sm">
                   {hasExistingCredit
                     ? "Your credit limit has been increased."
-                    : "You can now start borrowing against your collateral."}
+                    : "You can now start borrowing against your collateral. Set up instant payments for the best experience!"}
                 </div>
               </div>
             </motion.div>

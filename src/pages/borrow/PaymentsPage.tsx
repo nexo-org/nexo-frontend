@@ -1,3 +1,4 @@
+import { useWallet, type InputTransactionData } from "@aptos-labs/wallet-adapter-react";
 import { Scanner } from "@yudiel/react-qr-scanner";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -23,11 +24,50 @@ import {
   Zap,
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { FloatingOrbs } from "../../components/FloatingOrbs";
 import { GlowingButton } from "../../components/GlowingButton";
+import LoginWithGoogleButton from "../../components/LoginWithGoogleButton";
 import { WalletSelector } from "../../components/WalletSelector";
+import {
+  aptos,
+  CONTRACT_ADDRESS,
+  fetchUsdcBalance,
+  handleTransactionError,
+  unitsToUsdc,
+  usdcToUnits,
+  validateAptosAddress,
+  validateUsdcAmount,
+} from "../../lib/contractUtils";
+
+type CreditLineInfo = {
+  creditLimit: number;
+  currentDebt: number;
+  availableCredit: number;
+  isActive: boolean;
+  lastBorrowTimestamp: number;
+  collateral: number;
+};
+
+type PreAuthStatus = {
+  totalLimit: number;
+  usedAmount: number;
+  expiresAt: number;
+  perTxLimit: number;
+  isActive: boolean;
+};
+
+type TransactionStatusState = {
+  status: "pending" | "success" | "error";
+  message: string;
+};
+
+type PaymentData = {
+  recipientAddress: string;
+  paymentAmount: string;
+};
 
 type CreditSummaryBannerProps = {
   creditLimit: number;
@@ -54,7 +94,7 @@ const VirtualCreditCard = ({
     ? `4532 ${userAddress.slice(2, 6).toUpperCase()} ${userAddress.slice(6, 10).toUpperCase()} ${userAddress.slice(-4).toUpperCase()}`
     : "4532 •••• •••• ••••";
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isProcessing) {
       setShowPaymentEffect(true);
       setIsFlipped(true);
@@ -229,9 +269,9 @@ const VirtualCreditCard = ({
               isProcessing
                 ? {
                     boxShadow: [
-                      "0 0 0px rgba(251, 191, 36, 0)",
-                      "0 0 15px rgba(251, 191, 36, 0.4)",
-                      "0 0 0px rgba(251, 191, 36, 0)",
+                      "0 0 0px rgba(251,191,36,0)",
+                      "0 0 15px rgba(251,191,36,0.4)",
+                      "0 0 0px rgba(251,191,36,0)",
                     ],
                   }
                 : {
@@ -430,7 +470,7 @@ type QRScannerModalProps = {
 const QRScannerModal = ({ isOpen, onClose, onScan }: QRScannerModalProps) => {
   const [scanResult, setScanResult] = useState<string | undefined>(undefined);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (scanResult) {
       onScan(scanResult);
       setScanResult(undefined);
@@ -601,7 +641,7 @@ const PaymentSection = ({
         <GlowingButton
           onClick={() => onPayment({ recipientAddress, paymentAmount })}
           className="w-full py-4 text-lg font-semibold"
-          disabled={!isValidPayment || isProcessing}
+          // disabled={!isValidPayment || isProcessing}
         >
           {isProcessing ? (
             <>
@@ -903,105 +943,450 @@ const RecentTransactions = ({
 };
 
 export default function PaymentsPage() {
+  const { account, connected, signAndSubmitTransaction } = useWallet();
   const navigate = useNavigate();
-
-  // Mock authentication state
-  const [authenticated, setAuthenticated] = useState(true);
 
   const [activeTab, setActiveTab] = useState("payment");
   const [transactionStatus, setTransactionStatus] = useState<TransactionStatusState | null>(null);
 
-  // Mock credit data
-  const [creditData] = useState({
-    creditLimit: 5000,
-    availableCredit: 3500,
-    outstandingDebt: 1525,
-  });
+  // Real contract data states
+  const [creditLineInfo, setCreditLineInfo] = useState<CreditLineInfo | null>(null);
+  const [preAuthStatus, setPreAuthStatus] = useState<PreAuthStatus | null>(null);
+  const [usdcBalance, setUsdcBalance] = useState(0);
+  const [loading, setLoading] = useState(false);
 
-  // Mock transactions
-  const [transactions] = useState<Transaction[]>([
-    { type: "payment", amount: 150, date: "2 days ago", status: "completed", hash: "0x123...abc" },
-    { type: "borrow", amount: 500, date: "1 week ago", status: "completed", hash: "0x456...def" },
-    { type: "repay", amount: 200, date: "2 weeks ago", status: "completed", hash: "0x789...ghi" },
-  ]);
-
-  const [loadingTransactions] = useState(false);
+  // Transaction states
   const [recipientAddress, setRecipientAddress] = useState("");
   const [paymentAmount, setPaymentAmount] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Mock wallet address
-  const currentWalletAddress = "0x742d35Cc6634C0532925a3b8D402000BC64b2308";
+  // Real transactions from events/blockchain
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loadingTransactions, setLoadingTransactions] = useState(false);
 
-  const recentTransactions = transactions;
+  // Get credit line information from contract - UPDATED TO MATCH NEW INTEGRATION GUIDE
+  const getCreditLineInfo = async (): Promise<CreditLineInfo | null> => {
+    if (!account?.address) return null;
 
-  interface PaymentData {
-    recipientAddress: string;
-    paymentAmount: string;
-  }
+    try {
+      console.log(`Fetching credit line info for ${account.address.toString()}`);
 
-  interface TransactionStatusState {
-    status: "pending" | "success" | "error";
-    message: string;
-  }
+      // Use the view function from Integration Guide
+      const [collateralDeposited, creditLimit, borrowedAmount, interestAccrued, totalDebt, repaymentDueDate, isActive] =
+        await aptos.view<[string, string, string, string, string, string, boolean]>({
+          payload: {
+            function: `${CONTRACT_ADDRESS}::credit_manager::get_credit_info`,
+            functionArguments: [CONTRACT_ADDRESS, account.address.toString()],
+          },
+        });
 
+      console.log("Found credit info:", {
+        collateralDeposited,
+        creditLimit,
+        borrowedAmount,
+        totalDebt,
+        isActive,
+      });
+
+      const creditLimitUsdc = unitsToUsdc(creditLimit);
+      const currentDebtUsdc = unitsToUsdc(totalDebt);
+      const availableCredit = creditLimitUsdc - currentDebtUsdc;
+
+      return {
+        creditLimit: creditLimitUsdc,
+        currentDebt: currentDebtUsdc,
+        availableCredit: Math.max(0, availableCredit), // Ensure non-negative
+        isActive,
+        lastBorrowTimestamp: parseInt(repaymentDueDate),
+        collateral: unitsToUsdc(collateralDeposited),
+      };
+    } catch (error: any) {
+      console.error("Error fetching credit line info:", error);
+      return null;
+    }
+  };
+
+  // Get pre-authorization status
+  const getPreAuthStatus = async (): Promise<PreAuthStatus | null> => {
+    if (!account?.address) return null;
+
+    try {
+      const [totalLimit, usedAmount, expiresAt, perTxLimit, isActive] = await aptos.view<
+        [string, string, string, string, boolean]
+      >({
+        payload: {
+          function: `${CONTRACT_ADDRESS}::credit_manager::get_pre_auth_status`,
+          functionArguments: [CONTRACT_ADDRESS, account.address.toString()],
+        },
+      });
+
+      return {
+        totalLimit: unitsToUsdc(totalLimit),
+        usedAmount: unitsToUsdc(usedAmount),
+        expiresAt: parseInt(expiresAt),
+        perTxLimit: unitsToUsdc(perTxLimit),
+        isActive,
+      };
+    } catch (error) {
+      console.log("No pre-authorization found - this is normal until user sets it up");
+      return null;
+    }
+  };
+
+  // Setup pre-authorization (one-time setup like getting a credit card)
+  const setupPreAuthorization = async (totalLimitUsdc: number, perTxLimitUsdc: number, durationHours: number) => {
+    if (!account?.address) throw new Error("Wallet not connected");
+
+    const payload: InputTransactionData = {
+      data: {
+        function: `${CONTRACT_ADDRESS}::credit_manager::setup_pre_authorization`,
+        functionArguments: [
+          CONTRACT_ADDRESS,
+          usdcToUnits(totalLimitUsdc),
+          usdcToUnits(perTxLimitUsdc),
+          durationHours.toString(),
+        ],
+      },
+    };
+
+    return await signAndSubmitTransaction(payload);
+  };
+
+  // Execute instant payment (ultra-low gas) - FIXED
+  const executeInstantPayment = async (recipientAddress: string, amountUsdc: number) => {
+    if (!account?.address) throw new Error("Wallet not connected");
+
+    if (!validateAptosAddress(recipientAddress)) {
+      throw new Error("Invalid recipient address");
+    }
+
+    if (!validateUsdcAmount(amountUsdc)) {
+      throw new Error("Invalid payment amount");
+    }
+
+    const payload: InputTransactionData = {
+      data: {
+        function: `${CONTRACT_ADDRESS}::credit_manager::borrow_and_pay`,
+        functionArguments: [
+          CONTRACT_ADDRESS, // manager_addr
+          account.address.toString(), // borrower
+          recipientAddress, // recipient (NOT borrower address)
+          usdcToUnits(amountUsdc), // amount
+        ],
+      },
+    };
+
+    return await signAndSubmitTransaction(payload);
+  };
+
+  // Regular direct payment function (fallback when pre-auth is not available) - FIXED
+  const executeDirectPayment = async (recipientAddress: string, amountUsdc: number) => {
+    if (!account?.address) throw new Error("Wallet not connected");
+
+    if (!validateAptosAddress(recipientAddress)) {
+      throw new Error("Invalid recipient address");
+    }
+
+    if (!validateUsdcAmount(amountUsdc)) {
+      throw new Error("Invalid payment amount");
+    }
+
+    // First borrow the funds
+    const borrowPayload: InputTransactionData = {
+      data: {
+        function: `${CONTRACT_ADDRESS}::credit_manager::borrow`,
+        functionArguments: [CONTRACT_ADDRESS, usdcToUnits(amountUsdc)],
+      },
+    };
+
+    console.log("Borrow payload:", borrowPayload);
+    const borrowResult = await signAndSubmitTransaction(borrowPayload);
+    console.log("Borrow result:", borrowResult);
+
+    // Then transfer to recipient (requires separate USDC transfer)
+    // Note: This would require a separate USDC transfer transaction
+    // For now, we'll just do the borrow and let user handle the transfer
+
+    return borrowResult;
+  };
+
+  // Update pre-authorization limits
+  const updatePreAuthLimits = async (newTotalLimitUsdc: number, newPerTxLimitUsdc: number) => {
+    if (!account?.address) throw new Error("Wallet not connected");
+
+    const payload: InputTransactionData = {
+      data: {
+        function: `${CONTRACT_ADDRESS}::credit_manager::update_pre_auth_limits`,
+        functionArguments: [CONTRACT_ADDRESS, usdcToUnits(newTotalLimitUsdc), usdcToUnits(newPerTxLimitUsdc)],
+      },
+    };
+
+    return await signAndSubmitTransaction(payload);
+  };
+
+  // Toggle pre-authorization on/off
+  const togglePreAuthorization = async (enable: boolean) => {
+    if (!account?.address) throw new Error("Wallet not connected");
+
+    const payload: InputTransactionData = {
+      data: {
+        function: `${CONTRACT_ADDRESS}::credit_manager::toggle_pre_authorization`,
+        functionArguments: [CONTRACT_ADDRESS, enable],
+      },
+    };
+
+    return await signAndSubmitTransaction(payload);
+  };
+
+  // Get USDC balance
+  const getUsdcBalance = async () => {
+    if (!account?.address) return;
+
+    try {
+      const balance = await fetchUsdcBalance(account.address.toString());
+      setUsdcBalance(balance);
+    } catch (error) {
+      console.error("Error fetching USDC balance:", error);
+      setUsdcBalance(0);
+    }
+  };
+
+  // Load all data
+  const loadData = async () => {
+    if (!connected || !account?.address) return;
+
+    setLoading(true);
+    try {
+      // Get USDC balance first
+      await getUsdcBalance();
+
+      // Then try to get credit line info - this might be null for new users
+      const [creditInfo, preAuth] = await Promise.all([getCreditLineInfo(), getPreAuthStatus()]);
+
+      console.log("Credit Line Info:", creditInfo);
+      console.log("Pre-Authorization Status:", preAuth);
+
+      setCreditLineInfo(creditInfo); // Fix: Actually set the credit line info
+      setPreAuthStatus(preAuth);
+
+      // Load recent transactions (mock for now, could be fetched from events)
+      setTransactions([
+        { type: "payment", amount: 25.5, date: "2 hours ago", status: "completed", hash: "0x1234...abc" },
+        { type: "payment", amount: 15.75, date: "1 day ago", status: "completed", hash: "0x5678...def" },
+        { type: "borrow", amount: 100, date: "3 days ago", status: "completed", hash: "0x9abc...123" },
+      ]);
+    } catch (error) {
+      console.error("Error loading data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle payment with proper pre-authorization check - UPDATED
   const handlePayment = async (data: PaymentData): Promise<void> => {
     const { recipientAddress, paymentAmount } = data;
     const amount = parseFloat(paymentAmount);
 
-    if (!currentWalletAddress || amount <= 0) {
-      setTransactionStatus({ status: "error", message: "Invalid payment details" });
+    if (!connected || !account?.address) {
+      setTransactionStatus({ status: "error", message: "Please connect your wallet first" });
+      return;
+    }
+
+    if (!validateAptosAddress(recipientAddress)) {
+      setTransactionStatus({ status: "error", message: "Invalid recipient wallet address" });
+      return;
+    }
+
+    if (!validateUsdcAmount(amount)) {
+      setTransactionStatus({ status: "error", message: "Invalid payment amount" });
+      return;
+    }
+
+    // Check if user has an active credit line
+    if (!creditLineInfo || !creditLineInfo.isActive) {
+      setTransactionStatus({ status: "error", message: "Please open a credit line first before making payments." });
+      return;
+    }
+
+    // Check if user has sufficient credit
+    if (amount > creditLineInfo.availableCredit) {
+      setTransactionStatus({ status: "error", message: "Insufficient available credit for this payment." });
       return;
     }
 
     try {
       setIsProcessing(true);
-      setTransactionStatus({ status: "pending", message: "Preparing credit payment..." });
+      setTransactionStatus({ status: "pending", message: "Preparing payment..." });
 
-      // Mock payment process
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Check if pre-authorization exists and covers the payment
+      if (
+        preAuthStatus &&
+        preAuthStatus.isActive &&
+        amount <= preAuthStatus.perTxLimit &&
+        preAuthStatus.usedAmount + amount <= preAuthStatus.totalLimit
+      ) {
+        setTransactionStatus({ status: "pending", message: "Processing instant payment..." });
 
-      setTransactionStatus({ status: "pending", message: "Sending payment to recipient..." });
+        const result = await executeInstantPayment(recipientAddress, amount);
 
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+        console.log("Instant payment result:", result);
 
-      setTransactionStatus({
-        status: "success",
-        message: `Credit payment of ${amount.toLocaleString()} USDC sent successfully!`,
-      });
+        setTransactionStatus({
+          status: "success",
+          message: `Instant payment of $${amount.toFixed(2)} USDC sent successfully!`,
+        });
+      } else {
+        // If no pre-auth, suggest setting it up first
+        if (!preAuthStatus || !preAuthStatus.isActive) {
+          setTransactionStatus({
+            status: "error",
+            message:
+              "Please set up instant payments first for the best payment experience. Using direct borrow for now...",
+          });
+
+          // Fall back to direct borrow
+          setTransactionStatus({ status: "pending", message: "Processing direct borrow..." });
+
+          const result = await executeDirectPayment(recipientAddress, amount);
+
+          setTransactionStatus({
+            status: "success",
+            message: `Borrowed $${amount.toFixed(2)} USDC successfully! You can now transfer to ${recipientAddress.slice(0, 8)}...`,
+          });
+        } else {
+          // Pre-auth exists but limits exceeded
+          throw new Error(
+            `Payment exceeds your pre-authorization limits. Max per transaction: $${preAuthStatus.perTxLimit.toFixed(2)}`
+          );
+        }
+      }
 
       setRecipientAddress("");
       setPaymentAmount("");
 
+      // Refresh data
+      await loadData();
+
       setTimeout(() => setTransactionStatus(null), 5000);
     } catch (error: any) {
       console.error("Payment error:", error);
-
-      setTransactionStatus({ status: "error", message: "Credit payment failed. Please try again." });
-
+      const userFriendlyError = handleTransactionError(error);
+      setTransactionStatus({ status: "error", message: userFriendlyError });
       setTimeout(() => setTransactionStatus(null), 8000);
     } finally {
       setIsProcessing(false);
     }
   };
 
-  const handleLogin = () => {
-    setAuthenticated(true);
+  // Handle pre-authorization setup
+  const handleSetupPreAuth = async () => {
+    if (!connected || !account?.address) {
+      toast.error("Please connect your wallet first");
+      return;
+    }
+
+    if (!creditLineInfo || !creditLineInfo.isActive) {
+      toast.error("Please open a credit line first");
+      return;
+    }
+
+    try {
+      const totalLimit = Math.min(creditLineInfo.availableCredit, 100); // Max 100 USDC or available credit
+      const perTxLimit = Math.min(totalLimit * 0.2, 20); // 20% of total or max 20 USDC
+      const duration = 24; // 24 hours
+
+      toast.loading("Setting up instant payments...", { id: "preauth" });
+
+      const result = await setupPreAuthorization(totalLimit, perTxLimit, duration);
+
+      console.log("Pre-authorization setup result:", result);
+
+      toast.success(`Instant payments activated! Limit: $${totalLimit.toFixed(2)} USDC`, {
+        id: "preauth",
+      });
+
+      // Refresh data
+      await loadData();
+    } catch (error: any) {
+      console.error("Pre-authorization setup error:", error);
+      const userFriendlyError = handleTransactionError(error);
+      toast.error(userFriendlyError, { id: "preauth" });
+    }
   };
 
-  if (!authenticated) {
+  // Auto-load data on wallet connection
+  useEffect(() => {
+    if (connected && account?.address) {
+      loadData();
+    }
+  }, [connected, account?.address]);
+
+  // Show loading while fetching data
+  if (loading) {
     return (
       <div className="min-h-screen bg-black text-white">
         <FloatingOrbs />
-
         <div className="relative z-10 max-w-2xl mx-auto px-4 py-24">
-          <WalletSelector />
-          <div className="mt-6 text-center">
-            <GlowingButton onClick={handleLogin} className="text-lg px-8 py-4">
-              Demo Login
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="bg-black/40 backdrop-blur-2xl border border-white/10 rounded-2xl p-8 text-center"
+          >
+            <Loader className="w-12 h-12 text-orange-400 mx-auto mb-4 animate-spin" />
+            <h2 className="text-xl font-bold text-white mb-2">Loading Payment System...</h2>
+            <p className="text-gray-400">Fetching your credit information and payment settings</p>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!connected) {
+    return (
+      <div className="min-h-screen bg-black text-white">
+        <FloatingOrbs />
+        <div className="relative z-10 max-w-2xl mx-auto px-4 py-24">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="bg-black/40 backdrop-blur-2xl border border-white/10 rounded-2xl p-8 text-center"
+          >
+            <CreditCard className="w-16 h-16 text-orange-400 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-white mb-4">Connect Wallet for Payments</h2>
+            <p className="text-gray-400 mb-6">Connect your wallet to access instant payments and credit features</p>
+            <div className="space-y-4">
+              <WalletSelector />
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
+  // Check if user needs to open credit line - ENABLE THIS CHECK
+  if (!creditLineInfo || !creditLineInfo.isActive) {
+    return (
+      <div className="min-h-screen bg-black text-white">
+        <FloatingOrbs />
+        <div className="relative z-10 max-w-2xl mx-auto px-4 py-24">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="bg-black/40 backdrop-blur-2xl border border-white/10 rounded-2xl p-8 text-center"
+          >
+            <CreditCard className="w-16 h-16 text-orange-400 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-white mb-4">Open Credit Line First</h2>
+            <p className="text-gray-400 mb-6">
+              You need to open a credit line before you can make payments. This is like applying for a credit card.
+            </p>
+            <GlowingButton onClick={() => navigate("/borrow/stake")} className="text-lg px-8 py-4">
+              Open Credit Line
               <ArrowRight className="w-5 h-5" />
             </GlowingButton>
-          </div>
+          </motion.div>
         </div>
       </div>
     );
@@ -1010,24 +1395,55 @@ export default function PaymentsPage() {
   return (
     <div className="min-h-screen bg-black text-white">
       <FloatingOrbs />
-
+      <div className="fixed top-6 right-6 z-50 flex flex-row gap-2">
+        <WalletSelector />
+        <LoginWithGoogleButton />
+      </div>
       <div className="relative z-10 max-w-6xl mx-auto px-4 py-8">
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-white via-orange-200 to-red-200 bg-clip-text text-transparent">
-                Virtual Credit Card
+                Instant Credit Payments
               </h1>
-              <p className="text-gray-400 mt-2 text-lg">Pay instantly with your crypto credit line • Demo Mode</p>
+              <p className="text-gray-400 mt-2 text-lg">
+                Pay instantly with your crypto credit line •
+                {preAuthStatus?.isActive ? " Ultra-low gas enabled ⚡" : " Setup required for ultra-low gas"}
+              </p>
             </div>
           </div>
         </div>
 
+        {/* Show pre-auth setup if not active */}
+        {!preAuthStatus?.isActive && creditLineInfo && creditLineInfo.isActive && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-2xl p-6 mb-8"
+          >
+            <div className="flex items-start gap-4">
+              <Zap className="w-6 h-6 text-yellow-400 mt-1" />
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-white mb-2">⚡ Enable Ultra-Fast Payments</h3>
+                <p className="text-gray-300 text-sm mb-4">
+                  Set up instant payments to pay with just 8-9 gas units (98% gas reduction) instead of 500+ units for
+                  regular transactions. This works like getting a credit card - one setup, then instant payments!
+                </p>
+                <GlowingButton onClick={handleSetupPreAuth} className="text-sm">
+                  <Zap className="w-4 h-4" />
+                  Setup Instant Payments
+                </GlowingButton>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         <VirtualCreditCard
-          creditLimit={creditData.creditLimit}
-          availableCredit={creditData.availableCredit}
-          outstandingDebt={creditData.outstandingDebt}
-          userAddress={currentWalletAddress || ""}
+          creditLimit={creditLineInfo?.creditLimit || 0}
+          availableCredit={creditLineInfo?.availableCredit || 0}
+          outstandingDebt={creditLineInfo?.currentDebt || 0}
+          userAddress={account?.address?.toString() || ""}
           isProcessing={isProcessing}
         />
 
@@ -1046,7 +1462,7 @@ export default function PaymentsPage() {
                   className="flex-1"
                 >
                   <PaymentSection
-                    availableCredit={creditData.availableCredit}
+                    availableCredit={creditLineInfo?.availableCredit || 0}
                     onPayment={handlePayment}
                     recipientAddress={recipientAddress}
                     setRecipientAddress={setRecipientAddress}
@@ -1064,7 +1480,7 @@ export default function PaymentsPage() {
                   transition={{ duration: 0.3 }}
                   className="flex-1"
                 >
-                  <ReceiveSection walletAddress={currentWalletAddress || ""} />
+                  <ReceiveSection walletAddress={account?.address?.toString() || ""} />
                 </motion.div>
               )}
 
@@ -1079,13 +1495,48 @@ export default function PaymentsPage() {
           </div>
 
           <div className="lg:h-full">
-            <RecentTransactions
-              transactions={recentTransactions}
-              loading={loadingTransactions}
-              onRefresh={() => console.log("Refresh transactions")}
-            />
+            <RecentTransactions transactions={transactions} loading={loadingTransactions} onRefresh={loadData} />
           </div>
         </div>
+
+        {/* Pre-auth status panel */}
+        {preAuthStatus?.isActive && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="mt-8 bg-black/20 backdrop-blur-2xl border border-green-500/20 rounded-2xl p-6"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                <Zap className="w-5 h-5 text-green-400" />
+                Instant Payments Active
+              </h3>
+              <div className="text-sm text-green-400">Ultra-low gas enabled</div>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+              <div>
+                <div className="text-gray-400">Total Limit</div>
+                <div className="text-white font-semibold">${preAuthStatus.totalLimit.toFixed(2)}</div>
+              </div>
+              <div>
+                <div className="text-gray-400">Per Transaction</div>
+                <div className="text-white font-semibold">${preAuthStatus.perTxLimit.toFixed(2)}</div>
+              </div>
+              <div>
+                <div className="text-gray-400">Used</div>
+                <div className="text-orange-400 font-semibold">${preAuthStatus.usedAmount.toFixed(2)}</div>
+              </div>
+              <div>
+                <div className="text-gray-400">Expires</div>
+                <div className="text-white font-semibold">
+                  {new Date(preAuthStatus.expiresAt * 1000).toLocaleDateString()}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
       </div>
     </div>
   );

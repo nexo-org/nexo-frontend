@@ -103,6 +103,7 @@ export default function Deposit() {
 
   const getLendingPoolStats = async () => {
     try {
+      // Use the new contract address from Integration Guide
       const resource = await fetch(
         `https://fullnode.testnet.aptoslabs.com/v1/accounts/${CONTRACT_ADDRESS}/resource/${CONTRACT_ADDRESS}::lending_pool::LendingPool`
       )
