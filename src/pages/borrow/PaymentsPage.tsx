@@ -16,6 +16,7 @@ import {
   Info,
   Loader,
   Lock,
+  Nfc,
   Scan,
   Send,
   Shield,
@@ -24,12 +25,13 @@ import {
   Zap,
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { FloatingOrbs } from "../../components/FloatingOrbs";
 import { GlowingButton } from "../../components/GlowingButton";
 import LoginWithGoogleButton from "../../components/LoginWithGoogleButton";
+import NFCPaymentSender, { type NFCPaymentData } from "../../components/NFCPaymentSender";
 import { WalletSelector } from "../../components/WalletSelector";
 import {
   aptos,
@@ -438,6 +440,26 @@ const TabToggle = ({ activeTab, onTabChange }: TabToggleProps) => {
         </span>
       </motion.button>
 
+      {/* <motion.button
+        whileHover={{ scale: 1.02 }}
+        onClick={() => onTabChange("nfc")}
+        className={`flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-300 relative ${
+          activeTab === "nfc" ? "text-white" : "text-gray-400 hover:text-white"
+        }`}
+      >
+        {activeTab === "nfc" && (
+          <motion.div
+            layoutId="activeTab"
+            className="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg"
+            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+          />
+        )}
+        <span className="relative flex items-center gap-2 justify-center">
+          <Nfc className="w-4 h-4" />
+          NFC Pay
+        </span>
+      </motion.button> */}
+
       <motion.button
         whileHover={{ scale: 1.02 }}
         onClick={() => onTabChange("receive")}
@@ -534,10 +556,20 @@ const PaymentSection = ({
   isProcessing,
 }: PaymentSectionProps) => {
   const [showQRScanner, setShowQRScanner] = useState(false);
+  const [showNFC, setShowNFC] = useState(false);
+
+  // Handler for NFC scan result (address only)
+  const handleNFCPaymentScan = (data: NFCPaymentData) => {
+    if (data.recipientAddress && !isNaN(Number(data.recipientAddress))) {
+      // Defensive: ignore if address is a number (shouldn't happen)
+      return;
+    }
+    // NFC payment is now handled directly in the NFCPaymentSender component
+    // This handler is kept for backwards compatibility but doesn't need to do anything
+    console.log("NFC address scanned:", data.recipientAddress);
+  };
 
   const estimatedInterest = paymentAmount ? (parseFloat(paymentAmount) * 0.05) / 12 : 0;
-  const isValidPayment =
-    recipientAddress && paymentAmount && parseFloat(paymentAmount) > 0 && parseFloat(paymentAmount) <= availableCredit;
 
   const handleQRScan = (result: string) => {
     setRecipientAddress(result);
@@ -555,6 +587,36 @@ const PaymentSection = ({
 
   return (
     <>
+      {/* NFC sub-section toggle */}
+      <div className="flex justify-end mb-2">
+        <button
+          className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
+            showNFC ? "bg-blue-600 text-white" : "bg-black/30 text-blue-300 hover:bg-blue-500/10 hover:text-white"
+          }`}
+          onClick={() => setShowNFC((v) => !v)}
+        >
+          <Nfc className="inline w-4 h-4 mr-1" />
+          {showNFC ? "Hide NFC Scanner" : "Scan Wallet Address via NFC"}
+        </button>
+      </div>
+
+      {showNFC && (
+        <div className="mb-6">
+          <NFCPaymentSender
+            isProcessing={isProcessing}
+            availableCredit={availableCredit}
+            onPayment={async (recipientAddress, amount) => {
+              await onPayment({ recipientAddress, paymentAmount: amount });
+            }}
+            // Only scan for address, not amount
+            onNFCPayment={(data) => {
+              // Accept only address, ignore amount from NFC
+              handleNFCPaymentScan(data);
+            }}
+          />
+        </div>
+      )}
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -664,11 +726,9 @@ const PaymentSection = ({
         </div>
       </motion.div>
 
-      <AnimatePresence>
-        {showQRScanner && (
-          <QRScannerModal isOpen={showQRScanner} onClose={() => setShowQRScanner(false)} onScan={handleQRScan} />
-        )}
-      </AnimatePresence>
+
+      {/* QR Scanner Modal */}
+      <QRScannerModal isOpen={showQRScanner} onClose={() => setShowQRScanner(false)} onScan={handleQRScan} />
     </>
   );
 };
@@ -952,7 +1012,6 @@ export default function PaymentsPage() {
   // Real contract data states
   const [creditLineInfo, setCreditLineInfo] = useState<CreditLineInfo | null>(null);
   const [preAuthStatus, setPreAuthStatus] = useState<PreAuthStatus | null>(null);
-  const [usdcBalance, setUsdcBalance] = useState(0);
   const [loading, setLoading] = useState(false);
 
   // Transaction states
@@ -962,17 +1021,17 @@ export default function PaymentsPage() {
 
   // Real transactions from events/blockchain
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loadingTransactions, setLoadingTransactions] = useState(false);
+  const [loadingTransactions] = useState(false);
 
   // Get credit line information from contract - UPDATED TO MATCH NEW INTEGRATION GUIDE
-  const getCreditLineInfo = async (): Promise<CreditLineInfo | null> => {
+  const getCreditLineInfo = useCallback(async (): Promise<CreditLineInfo | null> => {
     if (!account?.address) return null;
 
     try {
       console.log(`Fetching credit line info for ${account.address.toString()}`);
 
       // Use the view function from Integration Guide
-      const [collateralDeposited, creditLimit, borrowedAmount, interestAccrued, totalDebt, repaymentDueDate, isActive] =
+      const [collateralDeposited, creditLimit, , , totalDebt, repaymentDueDate, isActive] =
         await aptos.view<[string, string, string, string, string, string, boolean]>({
           payload: {
             function: `${CONTRACT_ADDRESS}::credit_manager::get_credit_info`,
@@ -983,7 +1042,6 @@ export default function PaymentsPage() {
       console.log("Found credit info:", {
         collateralDeposited,
         creditLimit,
-        borrowedAmount,
         totalDebt,
         isActive,
       });
@@ -1000,14 +1058,14 @@ export default function PaymentsPage() {
         lastBorrowTimestamp: parseInt(repaymentDueDate),
         collateral: unitsToUsdc(collateralDeposited),
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error fetching credit line info:", error);
       return null;
     }
-  };
+  }, [account?.address]);
 
   // Get pre-authorization status
-  const getPreAuthStatus = async (): Promise<PreAuthStatus | null> => {
+  const getPreAuthStatus = useCallback(async (): Promise<PreAuthStatus | null> => {
     if (!account?.address) return null;
 
     try {
@@ -1027,11 +1085,11 @@ export default function PaymentsPage() {
         perTxLimit: unitsToUsdc(perTxLimit),
         isActive,
       };
-    } catch (error) {
+    } catch {
       console.log("No pre-authorization found - this is normal until user sets it up");
       return null;
     }
-  };
+  }, [account?.address]);
 
   // Setup pre-authorization (one-time setup like getting a credit card)
   const setupPreAuthorization = async (totalLimitUsdc: number, perTxLimitUsdc: number, durationHours: number) => {
@@ -1078,76 +1136,22 @@ export default function PaymentsPage() {
     return await signAndSubmitTransaction(payload);
   };
 
-  // Regular direct payment function (fallback when pre-auth is not available) - FIXED
-  const executeDirectPayment = async (recipientAddress: string, amountUsdc: number) => {
-    if (!account?.address) throw new Error("Wallet not connected");
-
-    if (!validateAptosAddress(recipientAddress)) {
-      throw new Error("Invalid recipient address");
-    }
-
-    if (!validateUsdcAmount(amountUsdc)) {
-      throw new Error("Invalid payment amount");
-    }
-
-    // Use the borrow function from integration guide
-    const borrowPayload: InputTransactionData = {
-      data: {
-        function: `${CONTRACT_ADDRESS}::credit_manager::borrow`,
-        functionArguments: [CONTRACT_ADDRESS, usdcToUnits(amountUsdc)],
-      },
-    };
-
-    console.log("Borrow payload:", borrowPayload);
-    const borrowResult = await signAndSubmitTransaction(borrowPayload);
-    console.log("Borrow result:", borrowResult);
-
-    return borrowResult;
-  };
-
-  // Update pre-authorization limits
-  const updatePreAuthLimits = async (newTotalLimitUsdc: number, newPerTxLimitUsdc: number) => {
-    if (!account?.address) throw new Error("Wallet not connected");
-
-    const payload: InputTransactionData = {
-      data: {
-        function: `${CONTRACT_ADDRESS}::credit_manager::update_pre_auth_limits`,
-        functionArguments: [CONTRACT_ADDRESS, usdcToUnits(newTotalLimitUsdc), usdcToUnits(newPerTxLimitUsdc)],
-      },
-    };
-
-    return await signAndSubmitTransaction(payload);
-  };
-
-  // Toggle pre-authorization on/off
-  const togglePreAuthorization = async (enable: boolean) => {
-    if (!account?.address) throw new Error("Wallet not connected");
-
-    const payload: InputTransactionData = {
-      data: {
-        function: `${CONTRACT_ADDRESS}::credit_manager::toggle_pre_authorization`,
-        functionArguments: [CONTRACT_ADDRESS, enable],
-      },
-    };
-
-    return await signAndSubmitTransaction(payload);
-  };
 
   // Get USDC balance
-  const getUsdcBalance = async () => {
+  const getUsdcBalance = useCallback(async () => {
     if (!account?.address) return;
 
     try {
       const balance = await fetchUsdcBalance(account.address.toString());
-      setUsdcBalance(balance);
+      return balance;
     } catch (error) {
       console.error("Error fetching USDC balance:", error);
-      setUsdcBalance(0);
+      return 0;
     }
-  };
+  }, [account?.address]);
 
   // Load all data
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!connected || !account?.address) return;
 
     setLoading(true);
@@ -1175,7 +1179,7 @@ export default function PaymentsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [connected, account?.address, getUsdcBalance, getCreditLineInfo, getPreAuthStatus]);
 
   // Handle payment with comprehensive validation
   const handlePayment = async (data: PaymentData): Promise<void> => {
@@ -1220,16 +1224,17 @@ export default function PaymentsPage() {
       await loadData();
 
       setTimeout(() => setTransactionStatus(null), 5000);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Payment error:", error);
 
       let userFriendlyError = "Transaction failed. Please try again.";
+      const errorMessage = error instanceof Error ? error.message : String(error);
 
-      if (error.message?.includes("INSUFFICIENT_LIQUIDITY")) {
+      if (errorMessage?.includes("INSUFFICIENT_LIQUIDITY")) {
         userFriendlyError = "Not enough liquidity in the lending pool. Try a smaller amount.";
-      } else if (error.message?.includes("EXCEEDS_CREDIT_LIMIT")) {
+      } else if (errorMessage?.includes("EXCEEDS_CREDIT_LIMIT")) {
         userFriendlyError = "Payment exceeds your credit limit.";
-      } else if (error.message?.includes("simulation")) {
+      } else if (errorMessage?.includes("simulation")) {
         userFriendlyError = "Transaction simulation failed. Check your credit status.";
       }
 
@@ -1269,19 +1274,20 @@ export default function PaymentsPage() {
 
       // Refresh data
       await loadData();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Pre-authorization setup error:", error);
       const userFriendlyError = handleTransactionError(error);
       toast.error(userFriendlyError, { id: "preauth" });
     }
   };
 
+
   // Auto-load data on wallet connection
   useEffect(() => {
     if (connected && account?.address) {
       loadData();
     }
-  }, [connected, account?.address]);
+  }, [connected, account?.address, loadData]);
 
   // Show loading while fetching data
   if (loading) {
