@@ -1,73 +1,114 @@
-# React + TypeScript + Vite
+# Nexo - Crypto-Native Credit Protocol
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> **Bringing traditional credit card functionality to Web3 with NFC tap-to-pay capabilities**
 
-Currently, two official plugins are available:
+Nexo is a decentralized crypto credit protocol that transforms how users access credit in the Web3 ecosystem. By staking crypto assets like USDC as collateral, users can open secured credit lines and make real-world payments through NFC-enabled devices, bridging the gap between DeFi and everyday transactions.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🌟 Key Features
 
-## React Compiler
+### 🏦 Decentralized Credit System
+- **Collateral-Backed Lending**: Stake USDC to open secured credit lines
+- **Dynamic Credit Limits**: Build reputation through responsible repayment behavior
+- **Unsecured Credit Evolution**: Graduate from secured to unsecured credit over time
+- **30-Day Grace Period**: Flexible repayment terms with built-in grace periods
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 💳 Real-World Payment Integration
+- **NFC Tap-to-Pay**: Use Halo Chip technology for contactless payments
+- **Dual Payment Methods**: Pay via crypto wallet or NFC-enabled devices
+- **Instant Transactions**: Real-time payment processing with crypto backing
+- **Universal Acceptance**: Works anywhere NFC payments are accepted
 
-## Expanding the ESLint configuration
+### 📈 Reputation-Based Scoring
+- **Credit Score Evolution**: Build on-chain reputation through payment history
+- **Automated Limit Increases**: Smart contracts automatically adjust credit limits
+- **Transparent Scoring**: Fully auditable and decentralized credit scoring
+- **Cross-Protocol Compatibility**: Reputation travels with your wallet
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 🌊 Liquidity Pool Economics
+- **Lender Incentives**: Earn interest by providing liquidity to the protocol
+- **Automated Yield Distribution**: Smart contract-managed interest payments
+- **Risk Management**: Collateralized loans minimize lender risk
+- **Decentralized Banking**: No traditional bank intermediaries
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🏗️ Architecture
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Smart Contract Infrastructure
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│  Credit Manager │    │  Lending Pool   │    │ Reputation Mgr  │
+├─────────────────┤    ├─────────────────┤    ├─────────────────┤
+│ • Credit Lines  │    │ • Liquidity     │    │ • Score Tracking│
+│ • Borrow Logic  │    │ • Interest Mgmt │    │ • Limit Updates │
+│ • Repayments    │    │ • Yield Distrib │    │ • History Log   │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         └───────────────────────┼───────────────────────┘
+                                 │
+              ┌─────────────────────────────────┐
+              │      Collateral Vault           │
+              ├─────────────────────────────────┤
+              │ • USDC Staking                  │
+              │ • Collateral Management         │
+              │ • Liquidation Protection        │
+              └─────────────────────────────────┘
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Technology Stack
+- **Blockchain**: Aptos/Move for high-performance smart contracts
+- **Cross-Chain**: LayerZero/Stargate for multi-chain collateral support
+- **Frontend**: React + Privy for seamless Web3 onboarding
+- **Hardware**: NFC Halo Chip integration for tap-to-pay
+- **Mobile**: Mobile-first design for everyday usability
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🚀 Getting Started
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Prerequisites
+- Node.js 18+ and npm/yarn
+- Aptos CLI for smart contract deployment
+- Git for version control
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/nexo-org/nexo-frontend/
+cd nexo
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your configuration
+
+# Compile smart contracts
+cd move_contracts
+aptos move compile
+
+# Deploy contracts (testnet)
+aptos move publish --named-addresses nexo_protocol=0x... --private-key ...
+
+# Start development server
+npm run dev
 ```
+
+## 💡 Use Cases
+
+### For Borrowers
+- **E-commerce**: Pay for online purchases using crypto credit
+- **Physical Retail**: Tap-to-pay at any NFC-enabled terminal
+- **Bill Payments**: Use credit for recurring payments and subscriptions
+- **Emergency Funds**: Access liquidity without selling crypto holdings
+
+### For Lenders
+- **Yield Generation**: Earn interest on idle USDC holdings
+- **Risk Management**: Benefit from overcollateralized loan structure
+- **Passive Income**: Automated interest distribution
+- **DeFi Integration**: Composable yield strategies
+
+
+
+
+**Built with ❤️ by the Nexo team**
+
+*Transforming the future of credit, one tap at a time.*
