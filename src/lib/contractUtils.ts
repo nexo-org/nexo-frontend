@@ -1,6 +1,6 @@
 import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
 
-export const CONTRACT_ADDRESS = "0x57cbaaa2f3cc8bb43ce6192bef7e375f21db76a5bd728f2e279b444569b8d4be";
+export const CONTRACT_ADDRESS = "0x1355c80d440ac62e6837469c1ae59ab5b3493a7ff394d3a3da7eb43090e39007";
 export const USDC_METADATA = "0x69091fbab5f7d635ee7ac5098cf0c1efbe31d68fec0f2cd565e8d168daf52832";
 
 const config = new AptosConfig({ network: Network.TESTNET });
@@ -451,5 +451,63 @@ export const getUserComprehensiveStatus = async (
   } catch (error) {
     console.error("Error fetching comprehensive user status:", error);
     return null;
+  }
+};
+
+export const checkPoolLiquidity = async (requiredAmountUsdc: number): Promise<boolean> => {
+  try {
+    const [liquidity] = await aptos.view<[string]>({
+      payload: {
+        function: `${CONTRACT_ADDRESS}::lending_pool::get_available_liquidity`,
+        functionArguments: [CONTRACT_ADDRESS],
+      },
+    });
+
+    const availableLiquidityUsdc = unitsToUsdc(liquidity);
+    console.log(`Pool liquidity: ${availableLiquidityUsdc} USDC, Required: ${requiredAmountUsdc} USDC`);
+
+    return availableLiquidityUsdc >= requiredAmountUsdc;
+  } catch (error) {
+    console.error("Error checking pool liquidity:", error);
+    return false;
+  }
+};
+
+export const validatePaymentPreconditions = async (
+  userAddress: string,
+  recipientAddress: string,
+  amountUsdc: number
+): Promise<{ isValid: boolean; error?: string }> => {
+  try {
+    // 1. Check if amount is valid
+    if (!validateUsdcAmount(amountUsdc)) {
+      return { isValid: false, error: "Invalid payment amount" };
+    }
+
+    // 2. Check if recipient address is valid
+    if (!validateAptosAddress(recipientAddress)) {
+      return { isValid: false, error: "Invalid recipient address" };
+    }
+
+    // 3. Check pool liquidity
+    const hasLiquidity = await checkPoolLiquidity(amountUsdc);
+    if (!hasLiquidity) {
+      return { isValid: false, error: "Insufficient liquidity in pool for this payment" };
+    }
+
+    // 4. Check user's credit info
+    const creditInfo = await getCreditLineInfo(userAddress);
+    if (!creditInfo || !creditInfo.isActive) {
+      return { isValid: false, error: "Credit line not active" };
+    }
+
+    if (amountUsdc > creditInfo.availableCredit) {
+      return { isValid: false, error: "Payment exceeds available credit" };
+    }
+
+    return { isValid: true };
+  } catch (error) {
+    console.error("Error validating payment preconditions:", error);
+    return { isValid: false, error: "Failed to validate payment conditions" };
   }
 };

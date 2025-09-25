@@ -144,13 +144,15 @@ export default function StakeCollateral() {
 
       console.log("Credit line opened:", result);
 
-      toast.success(`Successfully opened credit line with ${amount} USDC limit!`, {
+      toast.success(`Successfully opened credit line with $${amount.toFixed(2)} USDC limit!`, {
         id: "stake",
       });
 
       setTransactionStatus("success");
       setStakeAmount("");
-      navigate("/borrow");
+
+      // Navigate to payments page after successful credit line opening
+      setTimeout(() => navigate("/borrow"), 2000);
 
       await loadData();
 

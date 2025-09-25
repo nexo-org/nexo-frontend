@@ -578,7 +578,7 @@ const PaymentSection = ({
               type="text"
               value={recipientAddress}
               onChange={(e) => setRecipientAddress(e.target.value)}
-              placeholder="0x... or ENS name"
+              placeholder="0x..."
               className="w-full bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-4 text-white placeholder-gray-500 focus:border-orange-500/50 focus:outline-none transition-all duration-300 pr-32"
             />
             <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex gap-1">
@@ -660,7 +660,7 @@ const PaymentSection = ({
         {/* Payment Info */}
         <div className="flex items-center gap-2 text-xs text-gray-500 justify-center">
           <Lock className="w-3 h-3" />
-          <span>Your payment will be processed instantly on the Flow blockchain</span>
+          <span>Your payment will be processed instantly on the Aptos Blockchain</span>
         </div>
       </motion.div>
 
@@ -1052,7 +1052,7 @@ export default function PaymentsPage() {
     return await signAndSubmitTransaction(payload);
   };
 
-  // Execute instant payment (ultra-low gas) - FIXED
+  // Execute instant payment (ultra-low gas) - FIXED TO MATCH INTEGRATION GUIDE
   const executeInstantPayment = async (recipientAddress: string, amountUsdc: number) => {
     if (!account?.address) throw new Error("Wallet not connected");
 
@@ -1069,8 +1069,7 @@ export default function PaymentsPage() {
         function: `${CONTRACT_ADDRESS}::credit_manager::borrow_and_pay`,
         functionArguments: [
           CONTRACT_ADDRESS, // manager_addr
-          account.address.toString(), // borrower
-          recipientAddress, // recipient (NOT borrower address)
+          recipientAddress, // recipient
           usdcToUnits(amountUsdc), // amount
         ],
       },
@@ -1091,7 +1090,7 @@ export default function PaymentsPage() {
       throw new Error("Invalid payment amount");
     }
 
-    // First borrow the funds
+    // Use the borrow function from integration guide
     const borrowPayload: InputTransactionData = {
       data: {
         function: `${CONTRACT_ADDRESS}::credit_manager::borrow`,
@@ -1102,10 +1101,6 @@ export default function PaymentsPage() {
     console.log("Borrow payload:", borrowPayload);
     const borrowResult = await signAndSubmitTransaction(borrowPayload);
     console.log("Borrow result:", borrowResult);
-
-    // Then transfer to recipient (requires separate USDC transfer)
-    // Note: This would require a separate USDC transfer transaction
-    // For now, we'll just do the borrow and let user handle the transfer
 
     return borrowResult;
   };
@@ -1182,7 +1177,7 @@ export default function PaymentsPage() {
     }
   };
 
-  // Handle payment with proper pre-authorization check - UPDATED
+  // Handle payment with comprehensive validation
   const handlePayment = async (data: PaymentData): Promise<void> => {
     const { recipientAddress, paymentAmount } = data;
     const amount = parseFloat(paymentAmount);
@@ -1192,74 +1187,31 @@ export default function PaymentsPage() {
       return;
     }
 
-    if (!validateAptosAddress(recipientAddress)) {
-      setTransactionStatus({ status: "error", message: "Invalid recipient wallet address" });
-      return;
-    }
-
-    if (!validateUsdcAmount(amount)) {
-      setTransactionStatus({ status: "error", message: "Invalid payment amount" });
-      return;
-    }
-
-    // Check if user has an active credit line
-    if (!creditLineInfo || !creditLineInfo.isActive) {
-      setTransactionStatus({ status: "error", message: "Please open a credit line first before making payments." });
-      return;
-    }
-
-    // Check if user has sufficient credit
-    if (amount > creditLineInfo.availableCredit) {
-      setTransactionStatus({ status: "error", message: "Insufficient available credit for this payment." });
-      return;
-    }
-
     try {
       setIsProcessing(true);
-      setTransactionStatus({ status: "pending", message: "Preparing payment..." });
+      setTransactionStatus({ status: "pending", message: "Validating payment conditions..." });
 
-      // Check if pre-authorization exists and covers the payment
-      if (
-        preAuthStatus &&
-        preAuthStatus.isActive &&
-        amount <= preAuthStatus.perTxLimit &&
-        preAuthStatus.usedAmount + amount <= preAuthStatus.totalLimit
-      ) {
-        setTransactionStatus({ status: "pending", message: "Processing instant payment..." });
+      // Import the validation function
+      const { validatePaymentPreconditions } = await import("../../lib/contractUtils");
 
-        const result = await executeInstantPayment(recipientAddress, amount);
+      const validation = await validatePaymentPreconditions(account.address.toString(), recipientAddress, amount);
 
-        console.log("Instant payment result:", result);
-
-        setTransactionStatus({
-          status: "success",
-          message: `Instant payment of $${amount.toFixed(2)} USDC sent successfully!`,
-        });
-      } else {
-        // If no pre-auth, suggest setting it up first
-        if (!preAuthStatus || !preAuthStatus.isActive) {
-          setTransactionStatus({
-            status: "error",
-            message:
-              "Please set up instant payments first for the best payment experience. Using direct borrow for now...",
-          });
-
-          // Fall back to direct borrow
-          setTransactionStatus({ status: "pending", message: "Processing direct borrow..." });
-
-          const result = await executeDirectPayment(recipientAddress, amount);
-
-          setTransactionStatus({
-            status: "success",
-            message: `Borrowed $${amount.toFixed(2)} USDC successfully! You can now transfer to ${recipientAddress.slice(0, 8)}...`,
-          });
-        } else {
-          // Pre-auth exists but limits exceeded
-          throw new Error(
-            `Payment exceeds your pre-authorization limits. Max per transaction: $${preAuthStatus.perTxLimit.toFixed(2)}`
-          );
-        }
+      if (!validation.isValid) {
+        setTransactionStatus({ status: "error", message: validation.error || "Payment validation failed" });
+        return;
       }
+
+      setTransactionStatus({ status: "pending", message: "Processing payment..." });
+
+      // Use borrow_and_pay as the primary payment method
+      const result = await executeInstantPayment(recipientAddress, amount);
+
+      console.log("Payment result:", result);
+
+      setTransactionStatus({
+        status: "success",
+        message: `Payment of $${amount.toFixed(2)} USDC sent successfully!`,
+      });
 
       setRecipientAddress("");
       setPaymentAmount("");
@@ -1270,7 +1222,17 @@ export default function PaymentsPage() {
       setTimeout(() => setTransactionStatus(null), 5000);
     } catch (error: any) {
       console.error("Payment error:", error);
-      const userFriendlyError = handleTransactionError(error);
+
+      let userFriendlyError = "Transaction failed. Please try again.";
+
+      if (error.message?.includes("INSUFFICIENT_LIQUIDITY")) {
+        userFriendlyError = "Not enough liquidity in the lending pool. Try a smaller amount.";
+      } else if (error.message?.includes("EXCEEDS_CREDIT_LIMIT")) {
+        userFriendlyError = "Payment exceeds your credit limit.";
+      } else if (error.message?.includes("simulation")) {
+        userFriendlyError = "Transaction simulation failed. Check your credit status.";
+      }
+
       setTransactionStatus({ status: "error", message: userFriendlyError });
       setTimeout(() => setTransactionStatus(null), 8000);
     } finally {
