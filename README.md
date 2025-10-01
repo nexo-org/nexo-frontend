@@ -1,4 +1,4 @@
-# Nexo - Crypto-Native Credit Protocol
+# Nexo - Crypto-Native Credit Protocol | CTRL + MOVE HACKATHON
 
 > **Bringing traditional credit card functionality to Web3 with NFC tap-to-pay capabilities**
 
