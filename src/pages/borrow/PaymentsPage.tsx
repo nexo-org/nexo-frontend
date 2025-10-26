@@ -43,6 +43,7 @@ import {
   validateAptosAddress,
   validateUsdcAmount,
 } from "../../lib/contractUtils";
+import Onboard from "./Onboard";
 
 type CreditLineInfo = {
   creditLimit: number;
@@ -726,7 +727,6 @@ const PaymentSection = ({
         </div>
       </motion.div>
 
-
       {/* QR Scanner Modal */}
       <QRScannerModal isOpen={showQRScanner} onClose={() => setShowQRScanner(false)} onScan={handleQRScan} />
     </>
@@ -1031,13 +1031,14 @@ export default function PaymentsPage() {
       console.log(`Fetching credit line info for ${account.address.toString()}`);
 
       // Use the view function from Integration Guide
-      const [collateralDeposited, creditLimit, , , totalDebt, repaymentDueDate, isActive] =
-        await aptos.view<[string, string, string, string, string, string, boolean]>({
-          payload: {
-            function: `${CONTRACT_ADDRESS}::credit_manager::get_credit_info`,
-            functionArguments: [CONTRACT_ADDRESS, account.address.toString()],
-          },
-        });
+      const [collateralDeposited, creditLimit, , , totalDebt, repaymentDueDate, isActive] = await aptos.view<
+        [string, string, string, string, string, string, boolean]
+      >({
+        payload: {
+          function: `${CONTRACT_ADDRESS}::credit_manager::get_credit_info`,
+          functionArguments: [CONTRACT_ADDRESS, account.address.toString()],
+        },
+      });
 
       console.log("Found credit info:", {
         collateralDeposited,
@@ -1135,7 +1136,6 @@ export default function PaymentsPage() {
 
     return await signAndSubmitTransaction(payload);
   };
-
 
   // Get USDC balance
   const getUsdcBalance = useCallback(async () => {
@@ -1281,7 +1281,6 @@ export default function PaymentsPage() {
     }
   };
 
-
   // Auto-load data on wallet connection
   useEffect(() => {
     if (connected && account?.address) {
@@ -1312,24 +1311,25 @@ export default function PaymentsPage() {
 
   if (!connected) {
     return (
-      <div className="min-h-screen bg-black text-white">
-        <FloatingOrbs />
-        <div className="relative z-10 max-w-2xl mx-auto px-4 py-24">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="bg-black/40 backdrop-blur-2xl border border-white/10 rounded-2xl p-8 text-center"
-          >
-            <CreditCard className="w-16 h-16 text-orange-400 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-4">Connect Wallet for Payments</h2>
-            <p className="text-gray-400 mb-6">Connect your wallet to access instant payments and credit features</p>
-            <div className="space-y-4">
-              <WalletSelector />
-            </div>
-          </motion.div>
-        </div>
-      </div>
+      // <div className="min-h-screen bg-black text-white">
+      //   <FloatingOrbs />
+      //   <div className="relative z-10 max-w-2xl mx-auto px-4 py-24">
+      //     <motion.div
+      //       initial={{ opacity: 0, y: 20 }}
+      //       animate={{ opacity: 1, y: 0 }}
+      //       transition={{ duration: 0.6 }}
+      //       className="bg-black/40 backdrop-blur-2xl border border-white/10 rounded-2xl p-8 text-center"
+      //     >
+      //       <CreditCard className="w-16 h-16 text-orange-400 mx-auto mb-4" />
+      //       <h2 className="text-2xl font-bold text-white mb-4">Connect Wallet for Payments</h2>
+      //       <p className="text-gray-400 mb-6">Connect your wallet to access instant payments and credit features</p>
+      //       <div className="space-y-4">
+      //         <WalletSelector />
+      //       </div>
+      //     </motion.div>
+      //   </div>
+      // </div>
+      <Onboard />
     );
   }
 

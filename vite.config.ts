@@ -9,7 +9,20 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      buffer: "buffer",
+      crypto: "crypto-browserify",
+      stream: "stream-browserify",
+      util: "util",
+      process: "process/browser",
+      events: "events",
     },
+  },
+  define: {
+    global: "globalThis",
+    "process.env": {},
+  },
+  optimizeDeps: {
+    include: ["process", "buffer", "crypto-browserify", "stream-browserify", "util", "events"],
   },
   server: {
     host: true,
