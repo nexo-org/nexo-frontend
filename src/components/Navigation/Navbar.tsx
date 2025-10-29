@@ -24,26 +24,18 @@ const Navbar = () => {
             ease: "easeInOut",
           }}
           style={{
-            boxShadow:
-              "0 0 10px rgba(249, 115, 22, 0.8), 0 0 20px rgba(249, 115, 22, 0.4)",
+            boxShadow: "0 0 10px rgba(249, 115, 22, 0.8), 0 0 20px rgba(249, 115, 22, 0.4)",
           }}
         />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="flex items-center gap-3"
-          >
+          <motion.div whileHover={{ scale: 1.05 }} className="flex items-center gap-3">
             <a href="/">
-              <img
-                src="/logo.png"
-                alt="Logo"
-                className="w-12 h-12 flex items-center justify-center object-contain"
-              />
+              <img src="/logo.jpg" alt="Logo" className="w-12 h-12 flex items-center justify-center object-contain" />
               <span className="text-xl font-bold bg-gradient-to-r from-white to-orange-200 bg-clip-text text-transparent">
-                Nexo
+                Aion
               </span>
             </a>
           </motion.div>

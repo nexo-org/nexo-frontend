@@ -43,9 +43,9 @@ export const Sidebar = ({ activeTab, onTabChange, isOpen, onToggle }: SidebarPro
           <div className="p-6 border-b border-orange-500/20">
             <div className="flex items-center justify-center">
               <a href="/" className="flex items-center gap-3">
-                <img src="/logo.png" alt="Logo" className="w-12 h-12 flex items-center justify-center" />
+                <img src="/logo.jpg" alt="Logo" className="w-12 h-12 flex items-center justify-center" />
                 <span className="text-xl font-bold bg-gradient-to-r from-white to-orange-200 bg-clip-text text-transparent">
-                  Nexo
+                  Aion
                 </span>
               </a>
             </div>
@@ -129,7 +129,7 @@ export const Sidebar = ({ activeTab, onTabChange, isOpen, onToggle }: SidebarPro
                   <Wallet className="w-6 h-6 text-white" />
                 </div>
                 <span className="text-xl font-bold bg-gradient-to-r from-white to-orange-200 bg-clip-text text-transparent">
-                  Nexo
+                  Aion
                 </span>
               </div>
               <button onClick={onToggle} className="text-gray-400 hover:text-white transition-colors duration-300">
@@ -237,7 +237,7 @@ export const AppBar = ({ onMenuToggle }: AppBarProps) => {
                 <Wallet className="w-5 h-5 text-white" />
               </div>
               <span className="text-lg font-bold bg-gradient-to-r from-white to-orange-200 bg-clip-text text-transparent">
-                Nexo
+                Aion
               </span>
             </div>
           </div>

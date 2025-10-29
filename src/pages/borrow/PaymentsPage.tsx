@@ -215,7 +215,7 @@ const VirtualCreditCard = ({
                 >
                   <Zap className="w-6 h-6 text-amber-400" />
                 </motion.div>
-                <span className="font-bold text-lg text-white">Nexo</span>
+                <span className="font-bold text-lg text-white">Aion</span>
               </div>
               <button
                 onClick={() => setShowDetails(!showDetails)}
@@ -726,7 +726,6 @@ const PaymentSection = ({
         </div>
       </motion.div>
 
-
       {/* QR Scanner Modal */}
       <QRScannerModal isOpen={showQRScanner} onClose={() => setShowQRScanner(false)} onScan={handleQRScan} />
     </>
@@ -770,7 +769,7 @@ const ReceiveSection = ({ walletAddress }: ReceiveSectionProps) => {
           fgColor={"#000000"}
           level={"M"}
           imageSettings={{
-            src: "/logo.png",
+            src: "/logo.jpg",
             x: undefined,
             y: undefined,
             height: 32,
@@ -1031,13 +1030,14 @@ export default function PaymentsPage() {
       console.log(`Fetching credit line info for ${account.address.toString()}`);
 
       // Use the view function from Integration Guide
-      const [collateralDeposited, creditLimit, , , totalDebt, repaymentDueDate, isActive] =
-        await aptos.view<[string, string, string, string, string, string, boolean]>({
-          payload: {
-            function: `${CONTRACT_ADDRESS}::credit_manager::get_credit_info`,
-            functionArguments: [CONTRACT_ADDRESS, account.address.toString()],
-          },
-        });
+      const [collateralDeposited, creditLimit, , , totalDebt, repaymentDueDate, isActive] = await aptos.view<
+        [string, string, string, string, string, string, boolean]
+      >({
+        payload: {
+          function: `${CONTRACT_ADDRESS}::credit_manager::get_credit_info`,
+          functionArguments: [CONTRACT_ADDRESS, account.address.toString()],
+        },
+      });
 
       console.log("Found credit info:", {
         collateralDeposited,
@@ -1135,7 +1135,6 @@ export default function PaymentsPage() {
 
     return await signAndSubmitTransaction(payload);
   };
-
 
   // Get USDC balance
   const getUsdcBalance = useCallback(async () => {
@@ -1280,7 +1279,6 @@ export default function PaymentsPage() {
       toast.error(userFriendlyError, { id: "preauth" });
     }
   };
-
 
   // Auto-load data on wallet connection
   useEffect(() => {
