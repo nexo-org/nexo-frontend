@@ -141,7 +141,7 @@ export const getCreditLineInfo = async (
   collateral: number;
 } | null> => {
   try {
-    const [collateralDeposited, creditLimit, borrowedAmount, interestAccrued, totalDebt, repaymentDueDate, isActive] =
+    const [collateralDeposited, creditLimit, _borrowedAmount, _interestAccrued, totalDebt, repaymentDueDate, isActive] =
       await aptos.view<[string, string, string, string, string, string, boolean]>({
         payload: {
           function: `${CONTRACT_ADDRESS}::credit_manager::get_credit_info`,
@@ -262,7 +262,7 @@ export const calculateAccruedInterest = (
 };
 
 export const setupPreAuthorization = async (
-  borrowerAddress: string,
+  _borrowerAddress: string,
   totalLimitUsdc: number,
   perTxLimitUsdc: number,
   durationHours: number
@@ -280,14 +280,14 @@ export const setupPreAuthorization = async (
   return payload;
 };
 
-export const getPreAuthStatus = async (borrowerAddress: string) => {
+export const getPreAuthStatus = async (_borrowerAddress: string) => {
   try {
     const [totalLimit, usedAmount, expiresAt, perTxLimit, isActive] = await aptos.view<
       [string, string, string, string, boolean]
     >({
       payload: {
         function: `${CONTRACT_ADDRESS}::credit_manager::get_pre_auth_status`,
-        functionArguments: [CONTRACT_ADDRESS, borrowerAddress],
+        functionArguments: [CONTRACT_ADDRESS, _borrowerAddress],
       },
     });
     return {
@@ -313,7 +313,7 @@ export const executeSignlessPayment = async (recipientAddress: string, amountUsd
 };
 
 export const updatePreAuthLimits = async (
-  borrowerAddress: string,
+  _borrowerAddress: string,
   newTotalLimitUsdc: number,
   newPerTxLimitUsdc: number
 ) => {
@@ -325,7 +325,7 @@ export const updatePreAuthLimits = async (
   return payload;
 };
 
-export const togglePreAuthorization = async (borrowerAddress: string, enable: boolean) => {
+export const togglePreAuthorization = async (_borrowerAddress: string, enable: boolean) => {
   const payload = {
     function: `${CONTRACT_ADDRESS}::credit_manager::toggle_pre_authorization`,
     functionArguments: [CONTRACT_ADDRESS, enable],
@@ -334,7 +334,7 @@ export const togglePreAuthorization = async (borrowerAddress: string, enable: bo
   return payload;
 };
 
-export const openCreditLine = async (borrowerAddress: string, collateralAmountUsdc: number) => {
+export const openCreditLine = async (_borrowerAddress: string, collateralAmountUsdc: number) => {
   const payload = {
     function: `${CONTRACT_ADDRESS}::credit_manager::open_credit_line`,
     functionArguments: [CONTRACT_ADDRESS, usdcToUnits(collateralAmountUsdc)],
@@ -343,7 +343,7 @@ export const openCreditLine = async (borrowerAddress: string, collateralAmountUs
   return payload;
 };
 
-export const addCollateral = async (borrowerAddress: string, collateralAmountUsdc: number) => {
+export const addCollateral = async (_borrowerAddress: string, collateralAmountUsdc: number) => {
   const payload = {
     function: `${CONTRACT_ADDRESS}::credit_manager::add_collateral`,
     functionArguments: [CONTRACT_ADDRESS, usdcToUnits(collateralAmountUsdc)],
@@ -352,7 +352,7 @@ export const addCollateral = async (borrowerAddress: string, collateralAmountUsd
   return payload;
 };
 
-export const borrowFunds = async (borrowerAddress: string, amountUsdc: number) => {
+export const borrowFunds = async (_borrowerAddress: string, amountUsdc: number) => {
   const payload = {
     function: `${CONTRACT_ADDRESS}::credit_manager::borrow`,
     functionArguments: [CONTRACT_ADDRESS, usdcToUnits(amountUsdc)],
@@ -361,7 +361,7 @@ export const borrowFunds = async (borrowerAddress: string, amountUsdc: number) =
   return payload;
 };
 
-export const repayLoan = async (borrowerAddress: string, principalUsdc: number, interestUsdc: number) => {
+export const repayLoan = async (_borrowerAddress: string, principalUsdc: number, interestUsdc: number) => {
   const payload = {
     function: `${CONTRACT_ADDRESS}::credit_manager::repay`,
     functionArguments: [CONTRACT_ADDRESS, usdcToUnits(principalUsdc), usdcToUnits(interestUsdc)],
@@ -370,7 +370,7 @@ export const repayLoan = async (borrowerAddress: string, principalUsdc: number, 
   return payload;
 };
 
-export const depositCollateral = async (borrowerAddress: string, amountUsdc: number) => {
+export const depositCollateral = async (_borrowerAddress: string, amountUsdc: number) => {
   const payload = {
     function: `${CONTRACT_ADDRESS}::collateral_vault::deposit_collateral`,
     functionArguments: [CONTRACT_ADDRESS, usdcToUnits(amountUsdc)],
@@ -379,7 +379,7 @@ export const depositCollateral = async (borrowerAddress: string, amountUsdc: num
   return payload;
 };
 
-export const depositToLendingPool = async (lenderAddress: string, amountUsdc: number) => {
+export const depositToLendingPool = async (_lenderAddress: string, amountUsdc: number) => {
   const payload = {
     function: `${CONTRACT_ADDRESS}::lending_pool::deposit`,
     functionArguments: [CONTRACT_ADDRESS, usdcToUnits(amountUsdc)],
@@ -388,7 +388,7 @@ export const depositToLendingPool = async (lenderAddress: string, amountUsdc: nu
   return payload;
 };
 
-export const initializeUserReputation = async (userAddress: string) => {
+export const initializeUserReputation = async (_userAddress: string) => {
   const payload = {
     function: `${CONTRACT_ADDRESS}::reputation_manager::initialize_user`,
     functionArguments: [CONTRACT_ADDRESS],

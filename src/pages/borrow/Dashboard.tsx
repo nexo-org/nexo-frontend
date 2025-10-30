@@ -338,7 +338,7 @@ export default function BorrowerDashboard() {
   const [authenticated, setAuthenticated] = useState(true);
 
   // State for mock data (replacing smart contract data)
-  const [loading, setLoading] = useState(false);
+  const [loading, _setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [repayLoading, setRepayLoading] = useState(false);
 

@@ -64,8 +64,8 @@ export default function Waitlist() {
               <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-amber-500 rounded-xl flex items-center justify-center mb-4 shadow-lg shadow-orange-500/30">
                 <Users className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-orange-400 mb-2">2,847</h3>
-              <p className="text-gray-400">People Waiting</p>
+              <h3 className="text-2xl font-bold text-orange-400 mb-2">$50M+</h3>
+              <p className="text-gray-400">Credit Ready</p>
             </div>
 
             <div

@@ -59,7 +59,7 @@ export default function StakeCollateral() {
       console.log(`Fetching credit line info for ${account.address.toString()}`);
 
       // Use the view function from Integration Guide
-      const [collateralDeposited, creditLimit, borrowedAmount, interestAccrued, totalDebt, repaymentDueDate, isActive] =
+      const [collateralDeposited, creditLimit, _borrowedAmount, _interestAccrued, totalDebt, repaymentDueDate, isActive] =
         await aptos.view<[string, string, string, string, string, string, boolean]>({
           payload: {
             function: `${CONTRACT_ADDRESS}::credit_manager::get_credit_info`,

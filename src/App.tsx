@@ -6,7 +6,7 @@ import LandingPage from "./pages/LandingPage";
 import Lend from "./pages/lend/Deposit";
 import LendLayout from "./pages/lend/LendLayout";
 import Portfolio from "./pages/lend/Portfolio";
-import Waitlist from "./pages/waitlist";
+import Waitlist from "./pages/Waitlist";
 
 function App() {
   return (

@@ -115,7 +115,6 @@ export default function Deposit() {
         const totalDeposited = unitsToUsdc(poolData.total_deposited || "0");
         const totalBorrowed = unitsToUsdc(poolData.total_borrowed || "0");
         const totalRepaid = unitsToUsdc(poolData.total_repaid || "0");
-        const availableBalance = totalDeposited - totalBorrowed + totalRepaid;
         const utilizationRate = totalDeposited > 0 ? ((totalBorrowed - totalRepaid) / totalDeposited) * 100 : 0;
 
         setLendingPoolStats({
@@ -235,13 +234,6 @@ export default function Deposit() {
     }
   }, [connected, account?.address]);
 
-  const isLoading = transactionStatus === "depositing";
-  const canDeposit =
-    connected &&
-    depositAmount &&
-    parseFloat(depositAmount) > 0 &&
-    parseFloat(depositAmount) <= usdcBalance &&
-    !isLoading;
 
   return (
     <div className="min-h-screen bg-black text-white">
