@@ -57,9 +57,17 @@ const Navbar = () => {
               onClick={() => navigate("/lend/deposit")}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-6 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg font-medium hover:shadow-lg hover:shadow-orange-500/40 transition-all duration-300"
+              className="px-6 py-2 text-orange-300 hover:text-white transition-colors duration-300 font-medium"
             >
               Lend
+            </motion.button>
+            <motion.button
+              onClick={() => navigate("/waitlist")}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-6 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg font-medium hover:shadow-lg hover:shadow-orange-500/40 transition-all duration-300"
+            >
+              Waitlist
             </motion.button>
           </div>
         </div>
