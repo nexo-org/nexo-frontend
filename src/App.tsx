@@ -6,6 +6,7 @@ import LandingPage from "./pages/LandingPage";
 import Lend from "./pages/lend/Deposit";
 import LendLayout from "./pages/lend/LendLayout";
 import Portfolio from "./pages/lend/Portfolio";
+import Waitlist from "./pages/waitlist";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/borrow" element={<PaymentsPage />} />
         <Route path="/borrow/dashboard" element={<BorrowerDashboard />} />
         <Route path="/borrow/stake" element={<StakeCollateral />} />
+        <Route path="/waitlist" element={<Waitlist />} />
       </Routes>
     </BrowserRouter>
   );
