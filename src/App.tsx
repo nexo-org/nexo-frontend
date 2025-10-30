@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import BorrowerDashboard from "./pages/borrow/Dashboard";
 import PaymentsPage from "./pages/borrow/PaymentsPage";
@@ -10,19 +11,22 @@ import Waitlist from "./pages/Waitlist";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route element={<LendLayout />}>
-          <Route path="/lend/deposit" element={<Lend />} />
-          <Route path="/lend/portfolio" element={<Portfolio />} />
-        </Route>
-        <Route path="/borrow" element={<PaymentsPage />} />
-        <Route path="/borrow/dashboard" element={<BorrowerDashboard />} />
-        <Route path="/borrow/stake" element={<StakeCollateral />} />
-        <Route path="/waitlist" element={<Waitlist />} />
-      </Routes>
-    </BrowserRouter>
+    <div>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route element={<LendLayout />}>
+            <Route path="/lend/deposit" element={<Lend />} />
+            <Route path="/lend/portfolio" element={<Portfolio />} />
+          </Route>
+          <Route path="/borrow" element={<PaymentsPage />} />
+          <Route path="/borrow/dashboard" element={<BorrowerDashboard />} />
+          <Route path="/borrow/stake" element={<StakeCollateral />} />
+          <Route path="/waitlist" element={<Waitlist />} />
+        </Routes>
+      </BrowserRouter>
+      <Analytics />
+    </div>
   );
 }
 
