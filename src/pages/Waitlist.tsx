@@ -6,7 +6,10 @@ import Navbar from "../components/Navigation/Navbar";
 
 export default function Waitlist() {
   const handleJoinNow = () => {
-    window.open("https://form.typeform.com/to/oYQ0WNI9", "_blank");
+    window.open(
+      "https://docs.google.com/forms/d/e/1FAIpQLSeTYGDbp9-824ItdCjBTkqluXqYm20L_KlTG3ibJEyObizbWg/viewform?usp=publish-editor",
+      "_blank"
+    );
   };
 
   return (
