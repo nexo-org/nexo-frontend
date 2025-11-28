@@ -48,9 +48,9 @@ export function WalletSelector() {
           animate={{ opacity: 1, scale: 1 }}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="flex items-center gap-3 bg-gradient-to-r from-orange-500/20 to-amber-500/20 border border-orange-500/50 rounded-xl px-6 py-2 backdrop-blur-xl cursor-pointer hover:border-orange-400/70 transition-all duration-300"
+          className="flex items-center gap-3 bg-gradient-to-r from-black to-gray-800 border border-gray-700/50 rounded-xl px-6 py-2 backdrop-blur-xl cursor-pointer hover:shadow-lg hover:shadow-black/30 transition-all duration-300"
           style={{
-            background: "rgba(249, 115, 22, 0.1)",
+            background: "rgba(0, 0, 0, 0.8)",
             backdropFilter: "blur(20px)",
           }}
         >
@@ -61,8 +61,8 @@ export function WalletSelector() {
             </div>
             <div className="text-xs text-gray-300">Connected</div>
           </div>
-          <Wallet className="w-4 h-4 text-orange-400" />
-          <ChevronDown className="w-4 h-4 text-orange-400" />
+          <Wallet className="w-4 h-4 text-white" />
+          <ChevronDown className="w-4 h-4 text-white" />
         </motion.div>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
@@ -89,7 +89,7 @@ export function WalletSelector() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsDialogOpen(true)}
-        className="w-fit flex items-center gap-3 bg-gradient-to-r from-orange-500 to-amber-500 border border-orange-500/50 rounded-xl px-6 py-2 backdrop-blur-xl cursor-pointer hover:shadow-lg hover:shadow-orange-500/40 transition-all duration-300"
+        className="w-fit flex items-center gap-3 bg-gradient-to-r from-black to-gray-800 border border-gray-700/50 rounded-xl px-6 py-2 backdrop-blur-xl cursor-pointer hover:shadow-lg hover:shadow-black/40 transition-all duration-300"
       >
         <div className="font-medium text-white">Connect Wallet</div>
         <Wallet className="w-5 h-5 text-white" />

@@ -37,7 +37,7 @@ export default function LendLayout() {
       </div>
       <button
         onClick={handleMenuToggle}
-        className="fixed top-6 left-6 z-50 lg:hidden bg-black/40 backdrop-blur-xl border border-orange-500/20 rounded-xl p-3 text-gray-400 hover:text-white transition-all duration-300 hover:border-orange-500/40"
+        className="fixed top-6 left-6 z-50 lg:hidden bg-black/40 backdrop-blur-xl border border-black/20 rounded-xl p-3 text-gray-400 hover:text-white transition-all duration-300 hover:border-black/40"
         style={{
           background: "rgba(0, 0, 0, 0.4)",
           backdropFilter: "blur(20px)",

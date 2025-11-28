@@ -785,7 +785,7 @@ const ReceiveSection = ({ walletAddress }: ReceiveSectionProps) => {
           <p className="text-sm text-gray-400 mb-2">Your Wallet Address</p>
           <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-lg p-3 flex items-center justify-between">
             <span className="text-sm font-mono text-gray-300 truncate">
-              {walletAddress.slice(0, 16)}...{walletAddress.slice(-6)}
+              {walletAddress && walletAddress.slice(0, 16)}...{walletAddress.slice(-6)}
             </span>
             <motion.button
               whileHover={{ scale: 1.05 }}

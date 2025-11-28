@@ -18,9 +18,9 @@ export const GlowingButton = ({
   const baseClasses =
     "relative px-6 py-3 rounded-xl font-medium transition-all duration-300 group disabled:opacity-50 disabled:cursor-not-allowed";
   const variants = {
-    primary: "bg-gradient-to-r from-orange-500 to-amber-500 text-white hover:shadow-lg hover:shadow-orange-500/40",
+    primary: "bg-gradient-to-r from-black to-gray-800 text-white hover:shadow-lg hover:shadow-black/40",
     secondary:
-      "border-2 border-orange-500/50 text-orange-300 hover:border-orange-400 hover:text-orange-200 hover:shadow-lg hover:shadow-orange-500/25",
+      "border-2 border-black/50 text-gray-700 hover:border-black hover:text-black hover:shadow-lg hover:shadow-black/25",
     danger: "bg-gradient-to-r from-red-500 to-pink-500 text-white hover:shadow-lg hover:shadow-red-500/25",
   };
 
@@ -32,7 +32,7 @@ export const GlowingButton = ({
       onClick={onClick}
       disabled={disabled}
     >
-      <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-amber-500/20 rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-gray-800/20 rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       <span className="relative flex items-center gap-2">{children}</span>
     </motion.button>
   );

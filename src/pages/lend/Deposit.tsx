@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { AlertCircle, CheckCircle, DollarSign, Info, Loader, Wallet } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { FloatingOrbs } from "../../components/FloatingOrbs";
 import { GlowingButton } from "../../components/GlowingButton";
 import LoginWithGoogleButton from "../../components/LoginWithGoogleButton";
 import { WalletSelector } from "../../components/WalletSelector";
@@ -38,8 +37,8 @@ const LockupPeriodSelector = ({ selectedPeriod, onPeriodChange }: LockupPeriodSe
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2">
-        <h3 className="text-lg font-semibold text-white">Lockup Period</h3>
-        <Info className="w-4 h-4 text-gray-400" />
+        <h3 className="text-lg font-semibold text-black">Lockup Period</h3>
+        <Info className="w-4 h-4 text-gray-600" />
       </div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -51,13 +50,13 @@ const LockupPeriodSelector = ({ selectedPeriod, onPeriodChange }: LockupPeriodSe
             onClick={() => onPeriodChange(period)}
             className={`p-4 rounded-xl border-2 transition-all duration-300 ${
               selectedPeriod.months === period.months
-                ? "border-orange-500 bg-gradient-to-r from-orange-500/20 to-amber-500/20"
-                : "border-gray-700/50 hover:border-orange-500/50"
+                ? "border-black bg-gradient-to-r from-black/20 to-gray-700/20"
+                : "border-gray-700/50 hover:border-black/50"
             }`}
           >
             <div className="text-center">
-              <div className="text-white font-medium mb-1">{period.label}</div>
-              <div className="text-orange-400 text-sm font-semibold">{period.multiplier}x multiplier</div>
+              <div className="text-black font-medium mb-1">{period.label}</div>
+              <div className="text-black text-sm font-semibold">{period.multiplier}x multiplier</div>
             </div>
           </motion.button>
         ))}
@@ -236,8 +235,7 @@ export default function Deposit() {
 
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <FloatingOrbs />
+    <div className="min-h-screen bg-white text-black">
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 py-24">
         <motion.div
@@ -246,10 +244,10 @@ export default function Deposit() {
           transition={{ duration: 0.6 }}
           className="text-center mb-8"
         >
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-white via-orange-200 to-amber-200 bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-gray-900 via-gray-600 to-gray-900 bg-clip-text text-transparent">
             Deposit & Earn
           </h1>
-          <p className="text-gray-400 text-lg">Deposit USDC to the lending pool and earn interest from borrowers</p>
+          <p className="text-gray-600 text-lg">Deposit USDC to the lending pool and earn interest from borrowers</p>
         </motion.div>
 
         {/* Protocol Stats */}
@@ -257,27 +255,27 @@ export default function Deposit() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="bg-black/20 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 mb-8"
+          className="bg-gray-50/80 backdrop-blur-2xl border border-gray-200 rounded-2xl p-6 mb-8"
         >
-          <h3 className="text-lg font-semibold text-white mb-4">Lending Pool Statistics</h3>
+          <h3 className="text-lg font-semibold text-black mb-4">Lending Pool Statistics</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
-              <div className="text-gray-400 text-sm">Total Deposited</div>
-              <div className="text-xl font-bold text-white">${lendingPoolStats.totalDeposited.toLocaleString()}</div>
+              <div className="text-gray-600 text-sm">Total Deposited</div>
+              <div className="text-xl font-bold text-black">${lendingPoolStats.totalDeposited.toLocaleString()}</div>
             </div>
             <div>
-              <div className="text-gray-400 text-sm">Total Borrowed</div>
-              <div className="text-xl font-bold text-orange-400">
+              <div className="text-gray-600 text-sm">Total Borrowed</div>
+              <div className="text-xl font-bold text-black">
                 ${lendingPoolStats.totalBorrowed.toLocaleString()}
               </div>
             </div>
             <div>
-              <div className="text-gray-400 text-sm">Utilization Rate</div>
+              <div className="text-gray-600 text-sm">Utilization Rate</div>
               <div className="text-xl font-bold text-green-400">{lendingPoolStats.utilizationRate.toFixed(1)}%</div>
             </div>
             <div>
-              <div className="text-gray-400 text-sm">Current APY</div>
-              <div className="text-xl font-bold text-amber-400">{lendingPoolStats.currentAPY}%</div>
+              <div className="text-gray-600 text-sm">Current APY</div>
+              <div className="text-xl font-bold text-gray-600">{lendingPoolStats.currentAPY}%</div>
             </div>
           </div>
         </motion.div>
@@ -287,11 +285,11 @@ export default function Deposit() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="bg-black/40 backdrop-blur-2xl border border-white/10 rounded-2xl p-8 text-center"
+            className="bg-gray-50/80 backdrop-blur-2xl border border-gray-200 rounded-2xl p-8 text-center"
           >
-            <Wallet className="w-16 h-16 text-orange-400 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-4">Connect Wallet to Start Earning</h2>
-            <p className="text-gray-400 mb-6">
+            <Wallet className="w-16 h-16 text-black mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-black mb-4">Connect Wallet to Start Earning</h2>
+            <p className="text-gray-600 mb-6">
               Connect your wallet to deposit USDC and start earning from the lending pool
             </p>
             <div className="w-full flex flex-row gap-2 justify-center">
@@ -304,15 +302,15 @@ export default function Deposit() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="bg-black/20 backdrop-blur-2xl border border-white/10 rounded-2xl p-8 space-y-8"
+            className="bg-gray-50/80 backdrop-blur-2xl border border-gray-200 rounded-2xl p-8 space-y-8"
           >
             <div>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-white">Deposit Amount</h3>
-                <div className="text-sm text-gray-400">Available: {usdcBalance.toFixed(2)} USDC</div>
+                <h3 className="text-lg font-semibold text-black">Deposit Amount</h3>
+                <div className="text-sm text-gray-600">Available: {usdcBalance.toFixed(2)} USDC</div>
               </div>
 
-              <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-6">
+              <div className="bg-gray-100/80 backdrop-blur-sm border border-gray-300 rounded-xl p-6">
                 <div className="flex items-center justify-between mb-4">
                   <input
                     value={depositAmount}
@@ -321,13 +319,13 @@ export default function Deposit() {
                     type="number"
                     step="0.000001"
                     min="0"
-                    className="bg-transparent text-3xl font-bold text-white placeholder-gray-500 focus:outline-none w-full"
+                    className="bg-transparent text-3xl font-bold text-black placeholder-gray-500 focus:outline-none w-full"
                   />
                   <div className="flex items-center gap-2">
-                    <span className="text-lg text-gray-400">USDC</span>
+                    <span className="text-lg text-gray-600">USDC</span>
                     <button
                       onClick={() => setDepositAmount(usdcBalance.toString())}
-                      className="px-3 py-1 bg-orange-500/20 border border-orange-500/50 rounded-lg text-orange-400 hover:text-orange-300 transition-colors duration-300 text-sm font-medium"
+                      className="px-3 py-1 bg-black/20 border border-black/50 rounded-lg text-black hover:text-orange-300 transition-colors duration-300 text-sm font-medium"
                     >
                       MAX
                     </button>
@@ -336,12 +334,12 @@ export default function Deposit() {
 
                 <div className="flex items-center justify-between text-sm">
                   <div className="flex items-center gap-4">
-                    <span className="text-gray-400">Pool capacity</span>
-                    <span className="text-white">Unlimited</span>
+                    <span className="text-gray-600">Pool capacity</span>
+                    <span className="text-black">Unlimited</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-gray-400">Your balance</span>
-                    <span className="text-white">{usdcBalance.toFixed(6)} USDC</span>
+                    <span className="text-gray-600">Your balance</span>
+                    <span className="text-black">{usdcBalance.toFixed(6)} USDC</span>
                   </div>
                 </div>
               </div>
@@ -349,33 +347,33 @@ export default function Deposit() {
 
             <LockupPeriodSelector selectedPeriod={selectedPeriod} onPeriodChange={setSelectedPeriod} />
 
-            <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-6 space-y-4">
-              <h3 className="text-lg font-semibold text-white mb-4">Estimated Returns</h3>
+            <div className="bg-gray-100/80 backdrop-blur-sm border border-gray-300 rounded-xl p-6 space-y-4">
+              <h3 className="text-lg font-semibold text-black mb-4">Estimated Returns</h3>
 
               <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <div className="text-gray-400 text-sm mb-1">Effective APY</div>
-                  <div className="text-2xl font-bold text-orange-400">{calculateEffectiveAPY()}%</div>
+                  <div className="text-gray-600 text-sm mb-1">Effective APY</div>
+                  <div className="text-2xl font-bold text-black">{calculateEffectiveAPY()}%</div>
                 </div>
 
                 <div>
-                  <div className="text-gray-400 text-sm mb-1">Est. yield ({selectedPeriod.label})</div>
-                  <div className="text-2xl font-bold text-white">
+                  <div className="text-gray-600 text-sm mb-1">Est. yield ({selectedPeriod.label})</div>
+                  <div className="text-2xl font-bold text-black">
                     {calculateEstimatedYield().toFixed(2)}
-                    <span className="text-lg text-gray-400 ml-1">USDC</span>
+                    <span className="text-lg text-gray-600 ml-1">USDC</span>
                   </div>
                 </div>
               </div>
 
               {selectedPeriod.multiplier > 1 && (
-                <div className="bg-gradient-to-r from-orange-500/10 to-amber-500/10 border border-orange-500/20 rounded-xl p-4">
+                <div className="bg-gradient-to-r from-black/10 to-gray-700/10 border border-black/20 rounded-xl p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="w-6 h-6 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full flex items-center justify-center">
-                      <span className="text-white text-xs font-bold">✦</span>
+                    <div className="w-6 h-6 bg-gradient-to-r from-black to-gray-700 rounded-full flex items-center justify-center">
+                      <span className="text-black text-xs font-bold">✦</span>
                     </div>
-                    <span className="text-white font-medium">Bonus Multiplier Active</span>
+                    <span className="text-black font-medium">Bonus Multiplier Active</span>
                   </div>
-                  <p className="text-sm text-gray-400">
+                  <p className="text-sm text-gray-600">
                     Earn {selectedPeriod.multiplier}x rewards by locking for {selectedPeriod.label}
                   </p>
                 </div>
@@ -431,21 +429,21 @@ export default function Deposit() {
               </motion.div>
             )}
 
-            <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-4 space-y-2">
+            <div className="bg-gray-100/80 backdrop-blur-sm border border-gray-300 rounded-xl p-4 space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Your USDC Balance:</span>
-                <span className="text-white">{usdcBalance.toFixed(6)} USDC</span>
+                <span className="text-gray-600">Your USDC Balance:</span>
+                <span className="text-black">{usdcBalance.toFixed(6)} USDC</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Connected Wallet:</span>
-                <span className="text-orange-400 font-mono">
+                <span className="text-gray-600">Connected Wallet:</span>
+                <span className="text-black font-mono">
                   {account?.address
                     ? `${account.address.toString().slice(0, 6)}...${account.address.toString().slice(-4)}`
                     : ""}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Contract Address:</span>
+                <span className="text-gray-600">Contract Address:</span>
                 <span className="text-gray-500 font-mono text-xs">
                   {`${CONTRACT_ADDRESS.slice(0, 6)}...${CONTRACT_ADDRESS.slice(-4)}`}
                 </span>

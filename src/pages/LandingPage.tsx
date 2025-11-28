@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FloatingOrbs } from "../components/FloatingOrbs";
 import { GlowingButton } from "../components/GlowingButton";
 import Navbar from "../components/Navigation/Navbar";
 
@@ -25,53 +24,53 @@ const WalletCard = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay: 0.5 }}
-      className="bg-black/40 backdrop-blur-xl border border-orange-500/20 rounded-2xl p-6 max-w-sm mx-auto shadow-2xl shadow-orange-500/10"
+      className="bg-gray-50/80 backdrop-blur-xl border border-black/20 rounded-2xl p-6 max-w-sm mx-auto shadow-2xl shadow-black/10"
       style={{
-        background: 'rgba(0, 0, 0, 0.4)',
-        backdropFilter: 'blur(20px)',
-        boxShadow: '0 8px 32px rgba(249, 115, 22, 0.1), inset 0 1px 0 rgba(249, 115, 22, 0.2)'
+        background: "rgba(249, 250, 251, 0.8)",
+        backdropFilter: "blur(20px)",
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(0, 0, 0, 0.1)",
       }}
     >
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full flex items-center justify-center shadow-lg shadow-orange-500/30">
+          <div className="w-10 h-10 bg-gradient-to-r from-black to-gray-800 rounded-full flex items-center justify-center shadow-lg shadow-black/30">
             <Wallet className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="text-white font-semibold">Credit Wallet</h3>
+            <h3 className="text-black font-semibold">Credit Wallet</h3>
             <p className="text-gray-400 text-sm">0x4f2a...8c3d</p>
           </div>
         </div>
       </div>
 
       <div className="space-y-4">
-        <div className="bg-black/30 backdrop-blur-sm rounded-xl p-4 border border-orange-500/10">
+        <div className="bg-gray-100/50 backdrop-blur-sm rounded-xl p-4 border border-black/10">
           <div className="flex justify-between items-center mb-2">
             <span className="text-gray-400">Available Credit</span>
-            <span className="text-2xl font-bold text-orange-400">$12,500</span>
+            <span className="text-2xl font-bold text-black">$12,500</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-gray-400">Used</span>
-            <span className="text-white">$2,500</span>
+            <span className="text-black">$2,500</span>
           </div>
         </div>
 
-        <div className="bg-black/30 backdrop-blur-sm rounded-xl p-4 border border-orange-500/10">
+        <div className="bg-gray-100/50 backdrop-blur-sm rounded-xl p-4 border border-black/10">
           <div className="flex justify-between items-center mb-2">
             <span className="text-gray-400">Next Payment</span>
-            <span className="text-amber-400">$150</span>
+            <span className="text-gray-200">$150</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-gray-400">Due Date</span>
-            <span className="text-white">Dec 15, 2024</span>
+            <span className="text-black">Dec 15, 2024</span>
           </div>
         </div>
 
         <div className="flex gap-3">
-          <button className="flex-1 bg-gradient-to-r from-orange-500 to-amber-500 text-white py-3 rounded-xl font-medium hover:shadow-lg hover:shadow-orange-500/40 transition-all duration-300">
+          <button className="flex-1 bg-gradient-to-r from-black to-gray-800 text-white py-3 rounded-xl font-medium hover:shadow-lg hover:shadow-black/40 transition-all duration-300">
             Draw Funds
           </button>
-          <button className="flex-1 border border-gray-600 text-gray-300 py-3 rounded-xl font-medium hover:bg-black/30 hover:border-orange-500/30 transition-all duration-300">
+          <button className="flex-1 border border-gray-400 text-gray-700 py-3 rounded-xl font-medium hover:bg-gray-100/30 hover:border-black/30 transition-all duration-300">
             Repay
           </button>
         </div>
@@ -94,24 +93,24 @@ const StepCard = ({ step, title, description, icon: Icon, delay }: StepCardProps
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay }}
-      className="relative bg-black/40 backdrop-blur-xl border border-orange-500/20 rounded-2xl p-8 group hover:border-orange-500/40 transition-all duration-300"
+      className="relative bg-gray-50/80 backdrop-blur-xl border border-black/20 rounded-2xl p-8 group hover:border-black/40 transition-all duration-300"
       style={{
-        background: 'rgba(0, 0, 0, 0.4)',
-        backdropFilter: 'blur(20px)',
-        boxShadow: '0 8px 32px rgba(249, 115, 22, 0.05), inset 0 1px 0 rgba(249, 115, 22, 0.1)'
+        background: "rgba(249, 250, 251, 0.8)",
+        backdropFilter: "blur(20px)",
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(0, 0, 0, 0.05)",
       }}
     >
-      <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-amber-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/5 to-gray-800/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
       <div className="relative">
         <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full flex items-center justify-center shadow-lg shadow-orange-500/30">
+          <div className="w-12 h-12 bg-gradient-to-r from-black to-gray-800 rounded-full flex items-center justify-center shadow-lg shadow-black/30">
             <Icon className="w-6 h-6 text-white" />
           </div>
-          <div className="text-2xl font-bold text-orange-400">0{step}</div>
+          <div className="text-2xl font-bold text-black">0{step}</div>
         </div>
 
-        <h3 className="text-xl font-semibold text-white mb-3">{title}</h3>
+        <h3 className="text-xl font-semibold text-black mb-3">{title}</h3>
         <p className="text-gray-400 leading-relaxed">{description}</p>
       </div>
     </motion.div>
@@ -128,17 +127,17 @@ const FeatureCard = ({ icon: Icon, title, description }: FeatureCardProps) => {
   return (
     <motion.div
       whileHover={{ scale: 1.05 }}
-      className="bg-black/40 backdrop-blur-xl border border-orange-500/20 rounded-2xl p-6 group hover:border-orange-500/40 transition-all duration-300"
+      className="bg-gray-50/80 backdrop-blur-xl border border-black/20 rounded-2xl p-6 group hover:border-black/40 transition-all duration-300"
       style={{
-        background: 'rgba(0, 0, 0, 0.4)',
-        backdropFilter: 'blur(20px)',
-        boxShadow: '0 8px 32px rgba(249, 115, 22, 0.05), inset 0 1px 0 rgba(249, 115, 22, 0.1)'
+        background: "rgba(249, 250, 251, 0.8)",
+        backdropFilter: "blur(20px)",
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(0, 0, 0, 0.05)",
       }}
     >
-      <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-amber-500 rounded-xl flex items-center justify-center mb-4 shadow-lg shadow-orange-500/30">
+      <div className="w-12 h-12 bg-gradient-to-r from-black to-gray-800 rounded-xl flex items-center justify-center mb-4 shadow-lg shadow-black/30">
         <Icon className="w-6 h-6 text-white" />
       </div>
-      <h3 className="text-lg font-semibold text-white mb-2">{title}</h3>
+      <h3 className="text-lg font-semibold text-black mb-2">{title}</h3>
       <p className="text-gray-400">{description}</p>
     </motion.div>
   );
@@ -153,14 +152,14 @@ type FAQItemProps = {
 
 const FAQItem = ({ question, answer, isOpen, onClick }: FAQItemProps) => {
   return (
-    <motion.div initial={false} className="border-b border-orange-500/20 last:border-b-0">
+    <motion.div initial={false} className="border-b border-black/20 last:border-b-0">
       <motion.button
         onClick={onClick}
-        className="w-full py-6 flex items-center justify-between text-left hover:text-orange-400 transition-colors duration-300"
+        className="w-full py-6 flex items-center justify-between text-left hover:text-black transition-colors duration-300"
       >
-        <span className="text-lg font-medium text-white">{question}</span>
+        <span className="text-lg font-medium text-black">{question}</span>
         <motion.div animate={{ rotate: isOpen ? 45 : 0 }} transition={{ duration: 0.3 }}>
-          <Plus className="w-5 h-5 text-orange-400" />
+          <Plus className="w-5 h-5 text-black" />
         </motion.div>
       </motion.button>
       <motion.div
@@ -170,7 +169,7 @@ const FAQItem = ({ question, answer, isOpen, onClick }: FAQItemProps) => {
         className="overflow-hidden"
       >
         <div className="pb-6">
-          <p className="text-gray-400 leading-relaxed">{answer}</p>
+          <p className="text-gray-700 leading-relaxed">{answer}</p>
         </div>
       </motion.div>
     </motion.div>
@@ -192,7 +191,7 @@ export default function LandingPage() {
     {
       question: "What wallets are supported?",
       answer:
-        "We support all major Web3 wallets including MetaMask, WalletConnect, Petra, and other popular Aptos-compatible wallets. Simply connect your existing wallet to get started.",
+        "We support all major Web3 wallets including WalletConnect, Petra, and other popular Aptos-compatible wallets. Simply connect your existing wallet to get started.",
     },
     {
       question: "What happens if I don't repay on time?",
@@ -207,15 +206,14 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-x-hidden">
+    <div className="min-h-screen bg-white text-black overflow-x-hidden">
       <Navbar />
-      <FloatingOrbs />
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center px-4 mt-40">
         <motion.div
           style={{ opacity }}
-          className="absolute inset-0 bg-gradient-to-b from-transparent via-orange-500/5 to-transparent"
+          className="absolute inset-0 bg-gradient-to-b from-transparent via-black/5 to-transparent"
         />
 
         <div className="relative z-10 text-center max-w-6xl mx-auto">
@@ -225,12 +223,12 @@ export default function LandingPage() {
             transition={{ duration: 0.8 }}
             className="mb-8"
           >
-            <h1 className="text-6xl md:text-8xl font-bold mb-6 bg-gradient-to-r from-white via-orange-200 to-amber-200 bg-clip-text text-transparent">
+            <h1 className="text-6xl md:text-8xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-gray-600 to-gray-900 bg-clip-text text-transparent">
               Next-Gen Payments.
               <br />
               One Tap Away.
             </h1>
-            <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl text-gray-700 mb-12 max-w-3xl mx-auto leading-relaxed">
               Borrow instantly, repay flexibly. No cards, no banks — just smart credit powered by Aptos.
             </p>
           </motion.div>
@@ -264,7 +262,7 @@ export default function LandingPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white to-orange-200 bg-clip-text text-transparent">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-gray-800 via-gray-500 to-gray-800 bg-clip-text text-transparent">
               How It Works
             </h2>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto">
@@ -314,7 +312,7 @@ export default function LandingPage() {
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white to-amber-200 bg-clip-text text-transparent">
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-gray-800 via-gray-500 to-gray-800 bg-clip-text text-transparent">
                 Put Your Crypto to Work
               </h2>
               <p className="text-xl text-gray-400 mb-8 leading-relaxed">
@@ -323,16 +321,16 @@ export default function LandingPage() {
 
               <div className="space-y-6 mb-8">
                 <div className="flex items-center gap-4">
-                  <CheckCircle className="w-6 h-6 text-orange-400" />
-                  <span className="text-gray-300">Competitive APY rates</span>
+                  <CheckCircle className="w-6 h-6 text-black" />
+                  <span className="text-gray-700">Competitive APY rates</span>
                 </div>
                 <div className="flex items-center gap-4">
-                  <CheckCircle className="w-6 h-6 text-orange-400" />
-                  <span className="text-gray-300">Automated smart contracts</span>
+                  <CheckCircle className="w-6 h-6 text-black" />
+                  <span className="text-gray-700">Automated smart contracts</span>
                 </div>
                 <div className="flex items-center gap-4">
-                  <CheckCircle className="w-6 h-6 text-orange-400" />
-                  <span className="text-gray-300">Transparent on-chain transactions</span>
+                  <CheckCircle className="w-6 h-6 text-black" />
+                  <span className="text-gray-700">Transparent on-chain transactions</span>
                 </div>
               </div>
 
@@ -346,43 +344,43 @@ export default function LandingPage() {
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
-              className="bg-black/40 backdrop-blur-xl border border-orange-500/20 rounded-2xl p-8"
+              className="bg-gray-50/80 backdrop-blur-xl border border-black/20 rounded-2xl p-8"
               style={{
-                background: 'rgba(0, 0, 0, 0.4)',
-                backdropFilter: 'blur(20px)',
-                boxShadow: '0 8px 32px rgba(249, 115, 22, 0.1), inset 0 1px 0 rgba(249, 115, 22, 0.2)'
+                background: "rgba(249, 250, 251, 0.8)",
+                backdropFilter: "blur(20px)",
+                boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(0, 0, 0, 0.1)",
               }}
             >
-              <h3 className="text-2xl font-bold text-white mb-6">Yield</h3>
+              <h3 className="text-2xl font-bold text-black mb-6">Yield</h3>
 
               <div className="space-y-6">
-                <div className="bg-black/30 backdrop-blur-sm rounded-xl p-6 border border-orange-500/10">
+                <div className="bg-gray-100/50 backdrop-blur-sm rounded-xl p-6 border border-black/10">
                   <div className="flex justify-between items-center mb-4">
                     <span className="text-gray-400">Current APY</span>
-                    <span className="text-3xl font-bold text-orange-400">12.5%</span>
+                    <span className="text-3xl font-bold text-black">12.5%</span>
                   </div>
                   <div className="w-full bg-gray-700 rounded-full h-2">
                     <div
-                      className="bg-gradient-to-r from-orange-500 to-amber-500 h-2 rounded-full shadow-lg shadow-orange-500/20"
+                      className="bg-gradient-to-r from-black to-gray-600 h-2 rounded-full shadow-lg shadow-black/20"
                       style={{ width: "75%" }}
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-black/30 backdrop-blur-sm rounded-xl p-4 border border-orange-500/10">
+                  <div className="bg-gray-100/50 backdrop-blur-sm rounded-xl p-4 border border-black/10">
                     <div className="text-gray-400 text-sm mb-1">Your Deposits</div>
-                    <div className="text-xl font-bold text-white">$25,000</div>
+                    <div className="text-xl font-bold text-black">$25,000</div>
                   </div>
-                  <div className="bg-black/30 backdrop-blur-sm rounded-xl p-4 border border-orange-500/10">
+                  <div className="bg-gray-100/50 backdrop-blur-sm rounded-xl p-4 border border-black/10">
                     <div className="text-gray-400 text-sm mb-1">Total Earned</div>
-                    <div className="text-xl font-bold text-orange-400">$3,125</div>
+                    <div className="text-xl font-bold text-black">$3,125</div>
                   </div>
                 </div>
 
                 <button
                   onClick={() => navigate("/lend/deposit")}
-                  className="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white py-4 rounded-xl font-medium hover:shadow-lg hover:shadow-orange-500/40 transition-all duration-300"
+                  className="w-full bg-gradient-to-r from-black to-gray-800 text-white py-4 rounded-xl font-medium hover:shadow-lg hover:shadow-black/40 transition-all duration-300"
                 >
                   Deposit Now
                 </button>
@@ -401,7 +399,7 @@ export default function LandingPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white to-orange-200 bg-clip-text text-transparent">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-gray-800 via-gray-500 to-gray-800 bg-clip-text text-transparent">
               Why Choose Us?
             </h2>
           </motion.div>
@@ -415,7 +413,7 @@ export default function LandingPage() {
             <FeatureCard
               icon={Wallet}
               title="Multi-Wallet Support"
-              description="Connect with MetaMask, WalletConnect, Petra, and other popular Aptos wallets"
+              description="Connect with WalletConnect, Petra, and other popular Aptos wallets"
             />
             <FeatureCard
               icon={Target}
@@ -435,7 +433,7 @@ export default function LandingPage() {
       <section className="py-24 px-4 bg-gradient-to-b from-transparent to-black/20">
         <div className="max-w-7xl mx-auto text-center">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white to-amber-200 bg-clip-text text-transparent">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-gray-800 via-gray-500 to-gray-800 bg-clip-text text-transparent">
               Security & Transparency
             </h2>
             <p className="text-xl text-gray-400 mb-12 max-w-2xl mx-auto">
@@ -443,12 +441,12 @@ export default function LandingPage() {
             </p>
 
             <div className="flex flex-wrap justify-center items-center gap-8 mb-12">
-              <div className="flex items-center gap-3 bg-black/50 backdrop-blur-sm rounded-xl px-6 py-3 border border-orange-500/20">
-                <Shield className="w-8 h-8 text-orange-400" />
+              <div className="flex items-center gap-3 bg-black/50 backdrop-blur-sm rounded-xl px-6 py-3 border border-black/20">
+                <Shield className="w-8 h-8 text-black" />
                 <span className="text-lg font-medium">Aptos Blockchain</span>
               </div>
-              <div className="flex items-center gap-3 bg-black/50 backdrop-blur-sm rounded-xl px-6 py-3 border border-orange-500/20">
-                <Wallet className="w-8 h-8 text-amber-400" />
+              <div className="flex items-center gap-3 bg-black/50 backdrop-blur-sm rounded-xl px-6 py-3 border border-black/20">
+                <Wallet className="w-8 h-8 text-black" />
                 <span className="text-lg font-medium">Multi-Wallet Support</span>
               </div>
             </div>
@@ -465,17 +463,17 @@ export default function LandingPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white to-orange-200 bg-clip-text text-transparent">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-gray-800 via-gray-500 to-gray-800 bg-clip-text text-transparent">
               Frequently Asked Questions
             </h2>
           </motion.div>
 
-          <div 
-            className="bg-black/40 backdrop-blur-xl border border-orange-500/20 rounded-2xl p-8"
+          <div
+            className="bg-black/40 backdrop-blur-xl border border-black/20 rounded-2xl p-8"
             style={{
-              background: 'rgba(0, 0, 0, 0.4)',
-              backdropFilter: 'blur(20px)',
-              boxShadow: '0 8px 32px rgba(249, 115, 22, 0.1), inset 0 1px 0 rgba(249, 115, 22, 0.2)'
+              background: "rgba(249, 250, 251, 0.8)",
+              backdropFilter: "blur(20px)",
+              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(0, 0, 0, 0.1)",
             }}
           >
             {faqs.map((faq, index) => (
@@ -495,7 +493,7 @@ export default function LandingPage() {
       <section className="py-24 px-4 bg-gradient-to-b from-transparent to-black/40">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <h2 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-orange-200 to-amber-200 bg-clip-text text-transparent">
+            <h2 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-gray-600 to-gray-900 bg-clip-text text-transparent">
               Ready to get credit that works like the internet?
             </h2>
             <p className="text-xl text-gray-400 mb-12 max-w-2xl mx-auto">

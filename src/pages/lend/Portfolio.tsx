@@ -16,7 +16,6 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { FloatingOrbs } from "../../components/FloatingOrbs";
 import { GlowingButton } from "../../components/GlowingButton";
 import LoginWithGoogleButton from "../../components/LoginWithGoogleButton";
 import { WalletSelector } from "../../components/WalletSelector";
@@ -35,15 +34,15 @@ const StatCard = ({ title, value, subtitle, icon: Icon, trend, className = "" }:
   return (
     <motion.div
       whileHover={{ scale: 1.02 }}
-      className={`bg-black/20 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 group hover:border-orange-500/40 transition-all duration-300 ${className}`}
+      className={`bg-gray-50/80 backdrop-blur-2xl border border-gray-200 rounded-2xl p-6 group hover:border-black/40 transition-all duration-300 ${className}`}
     >
       <div className="flex items-center justify-between mb-4">
-        <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-amber-500 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/30">
-          <Icon className="w-5 h-5 text-white" />
+        <div className="w-10 h-10 bg-gradient-to-r from-black to-amber-500 rounded-xl flex items-center justify-center shadow-lg shadow-black/30">
+          <Icon className="w-5 h-5 text-black" />
         </div>
         {trend !== undefined && (
           <div
-            className={`flex items-center gap-1 text-sm ${trend > 0 ? "text-green-400" : trend < 0 ? "text-red-400" : "text-gray-400"}`}
+            className={`flex items-center gap-1 text-sm ${trend > 0 ? "text-green-400" : trend < 0 ? "text-red-400" : "text-gray-600"}`}
           >
             <TrendingUp className="w-4 h-4" />
             <span>
@@ -53,8 +52,8 @@ const StatCard = ({ title, value, subtitle, icon: Icon, trend, className = "" }:
           </div>
         )}
       </div>
-      <h3 className="text-2xl font-bold text-white mb-1">{value}</h3>
-      <p className="text-gray-400 text-sm">{title}</p>
+      <h3 className="text-2xl font-bold text-black mb-1">{value}</h3>
+      <p className="text-gray-600 text-sm">{title}</p>
       {subtitle && <p className="text-gray-500 text-xs mt-1">{subtitle}</p>}
     </motion.div>
   );
@@ -115,17 +114,17 @@ const ActivePositions = ({
 
   if (!lenderData || lenderData.depositedAmount === 0) {
     return (
-      <div className="bg-black/20 backdrop-blur-2xl border border-white/10 rounded-2xl p-8 mb-8">
+      <div className="bg-gray-50/80 backdrop-blur-2xl border border-gray-200 rounded-2xl p-8 mb-8">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-white">Active Positions</h2>
+          <h2 className="text-2xl font-bold text-black">Active Positions</h2>
         </div>
 
         <div className="text-center py-12">
           <div className="w-16 h-16 bg-gray-700/50 rounded-full flex items-center justify-center mx-auto mb-4">
-            <PieChart className="w-8 h-8 text-gray-400" />
+            <PieChart className="w-8 h-8 text-gray-600" />
           </div>
-          <h3 className="text-lg font-semibold text-white mb-2">No Active Positions</h3>
-          <p className="text-gray-400 mb-6">Start lending to see your positions here</p>
+          <h3 className="text-lg font-semibold text-black mb-2">No Active Positions</h3>
+          <p className="text-gray-600 mb-6">Start lending to see your positions here</p>
           <GlowingButton onClick={() => (window.location.href = "/lend/deposit")} className="text-sm">
             Start Lending
             <ArrowRight className="w-4 h-4" />
@@ -156,41 +155,41 @@ const ActivePositions = ({
   };
 
   return (
-    <div className="bg-black/20 backdrop-blur-2xl border border-white/10 rounded-2xl p-8 mb-8">
+    <div className="bg-gray-50/80 backdrop-blur-2xl border border-gray-200 rounded-2xl p-8 mb-8">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-white">Active Positions</h2>
+        <h2 className="text-2xl font-bold text-black">Active Positions</h2>
         <div className="text-sm text-green-400">1 Active Position</div>
       </div>
 
       <motion.div
         whileHover={{ scale: 1.01 }}
-        className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-6 hover:border-orange-500/30 transition-all duration-300 mb-6"
+        className="bg-gray-100/80 backdrop-blur-sm border border-gray-300 rounded-xl p-6 hover:border-black/30 transition-all duration-300 mb-6"
       >
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full flex items-center justify-center shadow-lg shadow-orange-500/30">
-              <span className="text-white font-bold text-sm">USDC</span>
+            <div className="w-10 h-10 bg-gradient-to-r from-black to-amber-500 rounded-full flex items-center justify-center shadow-lg shadow-black/30">
+              <span className="text-black font-bold text-sm">USDC</span>
             </div>
             <div>
-              <div className="text-white font-semibold">
+              <div className="text-black font-semibold">
                 $
                 {totalValue.toLocaleString(undefined, {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}
               </div>
-              <div className="text-gray-400 text-sm">USDC Lending Position</div>
+              <div className="text-gray-600 text-sm">USDC Lending Position</div>
             </div>
           </div>
 
           <div className="text-center md:text-left">
-            <div className="text-orange-400 font-semibold">{lenderData.apy}% APY</div>
-            <div className="text-gray-400 text-sm">Variable Rate</div>
+            <div className="text-black font-semibold">{lenderData.apy}% APY</div>
+            <div className="text-gray-600 text-sm">Variable Rate</div>
           </div>
 
           <div className="text-center md:text-left">
-            <div className="text-white font-semibold">${lenderData.earnedInterest.toFixed(2)}</div>
-            <div className="text-gray-400 text-sm">Interest Earned</div>
+            <div className="text-black font-semibold">${lenderData.earnedInterest.toFixed(2)}</div>
+            <div className="text-gray-600 text-sm">Interest Earned</div>
           </div>
 
           <div className="flex items-center justify-center md:justify-end gap-2">
@@ -203,16 +202,16 @@ const ActivePositions = ({
         <div className="mt-6 pt-6 border-t border-white/10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div>
-              <div className="text-gray-400 mb-1">Principal Deposited</div>
-              <div className="text-white font-semibold">${lenderData.depositedAmount.toFixed(2)}</div>
+              <div className="text-gray-600 mb-1">Principal Deposited</div>
+              <div className="text-black font-semibold">${lenderData.depositedAmount.toFixed(2)}</div>
             </div>
             <div>
-              <div className="text-gray-400 mb-1">Deposit Date</div>
-              <div className="text-white font-semibold">{depositDate.toLocaleDateString()}</div>
+              <div className="text-gray-600 mb-1">Deposit Date</div>
+              <div className="text-black font-semibold">{depositDate.toLocaleDateString()}</div>
             </div>
             <div>
-              <div className="text-gray-400 mb-1">Last Updated</div>
-              <div className="text-white font-semibold">
+              <div className="text-gray-600 mb-1">Last Updated</div>
+              <div className="text-black font-semibold">
                 {new Date(lenderData.lastUpdateTimestamp * 1000).toLocaleDateString()}
               </div>
             </div>
@@ -221,8 +220,8 @@ const ActivePositions = ({
       </motion.div>
 
       {/* Withdrawal Section */}
-      <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-white mb-4">Withdraw Funds</h3>
+      <div className="bg-gray-100/80 backdrop-blur-sm border border-gray-300 rounded-xl p-6">
+        <h3 className="text-lg font-semibold text-black mb-4">Withdraw Funds</h3>
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1">
             <input
@@ -230,14 +229,14 @@ const ActivePositions = ({
               value={withdrawAmount}
               onChange={(e) => setWithdrawAmount(e.target.value)}
               placeholder="Enter withdrawal amount"
-              className="w-full bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-3 text-white placeholder-gray-500 focus:border-orange-500/50 focus:outline-none transition-all duration-300"
+              className="w-full bg-gray-100/80 backdrop-blur-sm border border-gray-300 rounded-xl p-3 text-black placeholder-gray-500 focus:border-black/50 focus:outline-none transition-all duration-300"
             />
-            <div className="text-xs text-gray-400 mt-1">Available: ${totalValue.toFixed(2)} USDC</div>
+            <div className="text-xs text-gray-600 mt-1">Available: ${totalValue.toFixed(2)} USDC</div>
           </div>
           <div className="flex gap-2">
             <button
               onClick={() => setWithdrawAmount(totalValue.toString())}
-              className="px-4 py-3 bg-gray-700/50 border border-white/10 rounded-xl text-gray-300 hover:border-orange-500/50 hover:text-white transition-all duration-300 text-sm"
+              className="px-4 py-3 bg-gray-700/50 border border-white/10 rounded-xl text-gray-300 hover:border-black/50 hover:text-black transition-all duration-300 text-sm"
             >
               MAX
             </button>
@@ -261,9 +260,9 @@ const ActivePositions = ({
 const PoolStats = ({ poolStats }: { poolStats: any }) => {
   if (!poolStats) {
     return (
-      <div className="bg-black/20 backdrop-blur-2xl border border-white/10 rounded-2xl p-8">
+      <div className="bg-gray-50/80 backdrop-blur-2xl border border-gray-200 rounded-2xl p-8">
         <div className="flex items-center justify-center py-8">
-          <Loader className="w-8 h-8 text-orange-400 animate-spin" />
+          <Loader className="w-8 h-8 text-black animate-spin" />
         </div>
       </div>
     );
@@ -274,9 +273,9 @@ const PoolStats = ({ poolStats }: { poolStats: any }) => {
   const riskColor = utilizationRate > 90 ? "text-red-400" : utilizationRate > 70 ? "text-yellow-400" : "text-green-400";
 
   return (
-    <div className="bg-black/20 backdrop-blur-2xl border border-white/10 rounded-2xl p-8">
+    <div className="bg-gray-50/80 backdrop-blur-2xl border border-gray-200 rounded-2xl p-8">
       <div className="flex items-center gap-3 mb-6">
-        <h2 className="text-2xl font-bold text-white">Pool Health & Statistics</h2>
+        <h2 className="text-2xl font-bold text-black">Pool Health & Statistics</h2>
         <div className={`flex items-center gap-1 ${riskColor}`}>
           <CheckCircle className="w-5 h-5" />
           <span className="text-sm font-medium">{riskLevel} Risk</span>
@@ -284,18 +283,18 @@ const PoolStats = ({ poolStats }: { poolStats: any }) => {
       </div>
 
       {/* Utilization Rate */}
-      <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-6 mb-6">
+      <div className="bg-gray-100/80 backdrop-blur-sm border border-gray-300 rounded-xl p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
-          <span className="text-gray-400 font-medium">Pool Utilization</span>
-          <span className="text-2xl font-bold text-orange-400">{utilizationRate.toFixed(1)}%</span>
+          <span className="text-gray-600 font-medium">Pool Utilization</span>
+          <span className="text-2xl font-bold text-black">{utilizationRate.toFixed(1)}%</span>
         </div>
         <div className="w-full bg-gray-700 rounded-full h-3">
           <div
-            className="bg-gradient-to-r from-orange-500 to-amber-500 h-3 rounded-full transition-all duration-500 shadow-lg shadow-orange-500/20"
+            className="bg-gradient-to-r from-black to-amber-500 h-3 rounded-full transition-all duration-500 shadow-lg shadow-black/20"
             style={{ width: `${Math.min(utilizationRate, 100)}%` }}
           />
         </div>
-        <div className="flex justify-between mt-2 text-sm text-gray-400">
+        <div className="flex justify-between mt-2 text-sm text-gray-600">
           <span>Total Borrowed: ${poolStats.totalBorrowed.toLocaleString()}</span>
           <span>Total Deposited: ${poolStats.totalDeposited.toLocaleString()}</span>
         </div>
@@ -318,7 +317,7 @@ const PoolStats = ({ poolStats }: { poolStats: any }) => {
           <ExternalLink className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
           <div className="text-sm text-gray-300">
             <p className="font-medium text-blue-400 mb-1">Lending Pool Contract</p>
-            <p className="text-xs font-mono text-gray-400 break-all">{CONTRACT_ADDRESS}</p>
+            <p className="text-xs font-mono text-gray-600 break-all">{CONTRACT_ADDRESS}</p>
           </div>
         </div>
       </div>
@@ -332,31 +331,31 @@ const UnauthorizedView = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="bg-black/40 backdrop-blur-2xl border border-white/10 rounded-2xl p-12 text-center"
+      className="bg-gray-50/80 backdrop-blur-2xl border border-gray-200 rounded-2xl p-12 text-center"
     >
       <div className="max-w-md mx-auto">
-        <div className="w-20 h-20 bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-orange-500/30">
-          <PieChart className="w-10 h-10 text-white" />
+        <div className="w-20 h-20 bg-gradient-to-r from-black to-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-black/30">
+          <PieChart className="w-10 h-10 text-black" />
         </div>
 
-        <h2 className="text-3xl font-bold text-white mb-4">View Your Portfolio</h2>
+        <h2 className="text-3xl font-bold text-black mb-4">View Your Portfolio</h2>
 
-        <p className="text-gray-400 mb-8 leading-relaxed">
+        <p className="text-gray-600 mb-8 leading-relaxed">
           Connect your wallet to access your complete portfolio dashboard with real-time tracking of your lending
           positions, earnings, and performance analytics.
         </p>
 
         <div className="space-y-4 mb-8">
           <div className="flex items-center gap-3 text-gray-300">
-            <CheckCircle className="w-5 h-5 text-orange-400" />
+            <CheckCircle className="w-5 h-5 text-black" />
             <span>Track lending positions and earnings</span>
           </div>
           <div className="flex items-center gap-3 text-gray-300">
-            <CheckCircle className="w-5 h-5 text-orange-400" />
+            <CheckCircle className="w-5 h-5 text-black" />
             <span>Monitor APY and performance metrics</span>
           </div>
           <div className="flex items-center gap-3 text-gray-300">
-            <CheckCircle className="w-5 h-5 text-orange-400" />
+            <CheckCircle className="w-5 h-5 text-black" />
             <span>Access detailed pool analytics</span>
           </div>
         </div>
@@ -677,15 +676,14 @@ export default function Portfolio() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black text-white">
-        <FloatingOrbs />
+      <div className="min-h-screen bg-white text-black">
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 py-24">
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
-              <Loader className="w-12 h-12 text-orange-400 mx-auto mb-4 animate-spin" />
-              <h2 className="text-xl font-bold text-white mb-2">Loading Portfolio...</h2>
-              <p className="text-gray-400">Fetching your lending positions and earnings</p>
+              <Loader className="w-12 h-12 text-black mx-auto mb-4 animate-spin" />
+              <h2 className="text-xl font-bold text-black mb-2">Loading Portfolio...</h2>
+              <p className="text-gray-600">Fetching your lending positions and earnings</p>
             </div>
           </div>
         </div>
@@ -695,15 +693,14 @@ export default function Portfolio() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-black text-white">
-        <FloatingOrbs />
+      <div className="min-h-screen bg-white text-black">
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 py-24">
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
               <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-              <h2 className="text-xl font-bold text-white mb-2">Error Loading Portfolio</h2>
-              <p className="text-gray-400 mb-6">{error}</p>
+              <h2 className="text-xl font-bold text-black mb-2">Error Loading Portfolio</h2>
+              <p className="text-gray-600 mb-6">{error}</p>
               <GlowingButton onClick={loadPortfolioData}>Try Again</GlowingButton>
             </div>
           </div>
@@ -713,8 +710,7 @@ export default function Portfolio() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <FloatingOrbs />
+    <div className="min-h-screen bg-white text-black">
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-24">
         {/* Header */}
@@ -724,10 +720,10 @@ export default function Portfolio() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-white via-orange-200 to-amber-200 bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-gray-900 via-gray-600 to-gray-900 bg-clip-text text-transparent">
             Your Portfolio
           </h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Complete overview of your lending positions and earnings
           </p>
         </motion.div>

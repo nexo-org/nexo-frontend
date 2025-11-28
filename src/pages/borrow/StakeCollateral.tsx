@@ -4,7 +4,6 @@ import { AlertCircle, CheckCircle, CreditCard, DollarSign, Info, Loader, Plus, W
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { FloatingOrbs } from "../../components/FloatingOrbs";
 import { GlowingButton } from "../../components/GlowingButton";
 import LoginWithGoogleButton from "../../components/LoginWithGoogleButton";
 import { WalletSelector } from "../../components/WalletSelector";
@@ -271,20 +270,18 @@ export default function StakeCollateral() {
 
   if (!connected) {
     return (
-      <div className="min-h-screen bg-black text-white">
-        <FloatingOrbs />
-
+      <div className="min-h-screen bg-white text-black">
         <div className="relative z-10 max-w-2xl mx-auto px-4 py-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="bg-black/40 backdrop-blur-2xl border border-white/10 rounded-2xl p-8"
+            className="bg-gray-50/80 backdrop-blur-2xl border border-gray-200 rounded-2xl p-8"
           >
             <div className="text-center mb-8">
-              <CreditCard className="w-16 h-16 text-orange-400 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-white mb-4">Connect Wallet to Continue</h2>
-              <p className="text-gray-400">Connect your wallet to stake collateral and open a credit line</p>
+              <CreditCard className="w-16 h-16 text-black mx-auto mb-4" />
+              <h2 className="text-2xl font-bold text-black mb-4">Connect Wallet to Continue</h2>
+              <p className="text-gray-600">Connect your wallet to stake collateral and open a credit line</p>
             </div>
 
             <div className="space-y-4">
@@ -303,19 +300,17 @@ export default function StakeCollateral() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black text-white">
-        <FloatingOrbs />
-
+      <div className="min-h-screen bg-white text-black">
         <div className="relative z-10 max-w-2xl mx-auto px-4 py-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="bg-black/40 backdrop-blur-2xl border border-white/10 rounded-2xl p-8 text-center"
+            className="bg-gray-50/80 backdrop-blur-2xl border border-gray-200 rounded-2xl p-8 text-center"
           >
-            <Loader className="w-12 h-12 text-orange-400 mx-auto mb-4 animate-spin" />
-            <h2 className="text-xl font-bold text-white mb-2">Loading Credit Information...</h2>
-            <p className="text-gray-400">Fetching your credit line status</p>
+            <Loader className="w-12 h-12 text-black mx-auto mb-4 animate-spin" />
+            <h2 className="text-xl font-bold text-black mb-2">Loading Credit Information...</h2>
+            <p className="text-gray-600">Fetching your credit line status</p>
           </motion.div>
         </div>
       </div>
@@ -323,14 +318,12 @@ export default function StakeCollateral() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <FloatingOrbs />
-
+    <div className="min-h-screen bg-white text-black">
       {/* Wallet Info */}
       <div className="flex items-center gap-4 w-full justify-end p-4">
         <div className="text-right">
-          <div className="flex items-center gap-2 text-sm text-gray-400">
-            <Wallet className="w-4 h-4 text-orange-400" />
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <Wallet className="w-4 h-4 text-black" />
             <span className="font-mono">
               {account?.address
                 ? `${account.address.toString().slice(0, 6)}...${account.address.toString().slice(-4)}`
@@ -348,10 +341,10 @@ export default function StakeCollateral() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-orange-200 to-red-200 bg-clip-text text-transparent">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-gray-600 to-gray-900 bg-clip-text text-transparent">
             {hasExistingCredit ? "Add More Collateral" : "Stake USDC as Collateral"}
           </h1>
-          <p className="text-gray-400 text-lg">
+          <p className="text-gray-600 text-lg">
             {hasExistingCredit
               ? "Increase your credit limit by adding more USDC collateral"
               : "Stake USDC to open your credit line and start borrowing"}
@@ -364,27 +357,27 @@ export default function StakeCollateral() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="bg-black/20 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 mb-8"
+            className="bg-gray-50/80 backdrop-blur-2xl border border-gray-200 rounded-2xl p-6 mb-8"
           >
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <Info className="w-5 h-5 text-orange-400" />
+            <h3 className="text-lg font-semibold text-black mb-4 flex items-center gap-2">
+              <Info className="w-5 h-5 text-black" />
               Current Credit Line
             </h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <div className="text-gray-400 text-sm">Credit Limit</div>
-                <div className="text-xl font-bold text-orange-400">${creditLineInfo.creditLimit.toFixed(2)}</div>
+                <div className="text-gray-600 text-sm">Credit Limit</div>
+                <div className="text-xl font-bold text-black">${creditLineInfo.creditLimit.toFixed(2)}</div>
               </div>
               <div>
-                <div className="text-gray-400 text-sm">Available Credit</div>
+                <div className="text-gray-600 text-sm">Available Credit</div>
                 <div className="text-xl font-bold text-green-400">${creditLineInfo.availableCredit.toFixed(2)}</div>
               </div>
               <div>
-                <div className="text-gray-400 text-sm">Current Debt</div>
+                <div className="text-gray-600 text-sm">Current Debt</div>
                 <div className="text-xl font-bold text-red-400">${creditLineInfo.currentDebt.toFixed(2)}</div>
               </div>
               <div>
-                <div className="text-gray-400 text-sm">Status</div>
+                <div className="text-gray-600 text-sm">Status</div>
                 <div className="text-xl font-bold text-green-400">
                   {creditLineInfo.isActive ? "Active" : "Inactive"}
                 </div>
@@ -397,10 +390,10 @@ export default function StakeCollateral() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="bg-black/20 backdrop-blur-2xl border border-white/10 rounded-2xl p-8"
+          className="bg-gray-50/80 backdrop-blur-2xl border border-gray-200 rounded-2xl p-8"
         >
           <div className="mb-8">
-            <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-6 focus-within:border-orange-500/50 transition-all duration-300">
+            <div className="bg-gray-100/80 backdrop-blur-sm border border-gray-300 rounded-xl p-6 focus-within:border-black/50 transition-all duration-300">
               <div className="flex items-center justify-between mb-4">
                 <input
                   value={stakeAmount}
@@ -409,13 +402,13 @@ export default function StakeCollateral() {
                   type="number"
                   step="0.000001"
                   min="0"
-                  className="bg-transparent text-4xl font-bold text-white placeholder-gray-500 focus:outline-none w-full"
+                  className="bg-transparent text-4xl font-bold text-black placeholder-gray-500 focus:outline-none w-full"
                 />
                 <div className="flex items-center gap-3">
-                  <span className="text-xl text-gray-400">USDC</span>
+                  <span className="text-xl text-gray-600">USDC</span>
                   <button
                     onClick={() => setStakeAmount(usdcBalance.toString())}
-                    className="px-3 py-1 bg-orange-500/20 backdrop-blur-sm border border-orange-500/50 rounded-lg text-orange-400 hover:text-orange-300 transition-colors duration-300 text-sm font-medium"
+                    className="px-3 py-1 bg-gray-200/80 backdrop-blur-sm border border-gray-400 rounded-lg text-black hover:text-gray-700 transition-colors duration-300 text-sm font-medium"
                   >
                     MAX
                   </button>
@@ -424,7 +417,7 @@ export default function StakeCollateral() {
             </div>
 
             <div className="flex justify-between items-center mt-3 px-2">
-              <span className="text-gray-400 text-sm">Balance: {usdcBalance.toFixed(2)} USDC</span>
+              <span className="text-gray-600 text-sm">Balance: {usdcBalance.toFixed(2)} USDC</span>
             </div>
           </div>
 
@@ -434,17 +427,17 @@ export default function StakeCollateral() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
-              className="bg-black/40 backdrop-blur-sm border border-orange-500/30 rounded-xl p-6 mb-8"
+              className="bg-gray-100/80 backdrop-blur-sm border border-gray-300 rounded-xl p-6 mb-8"
             >
               <div className="text-center">
-                <div className="text-gray-400 text-sm mb-2">
+                <div className="text-gray-600 text-sm mb-2">
                   {hasExistingCredit ? "Additional Credit Limit" : "Credit Limit"}
                 </div>
-                <div className="text-3xl font-bold text-transparent bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text">
+                <div className="text-3xl font-bold text-transparent bg-gradient-to-r from-black to-red-400 bg-clip-text">
                   ${calculateCreditLimit().toFixed(2)}
                 </div>
                 {hasExistingCredit && creditLineInfo && (
-                  <div className="mt-2 text-gray-400 text-sm">
+                  <div className="mt-2 text-gray-600 text-sm">
                     New Total: ${(creditLineInfo.creditLimit + calculateCreditLimit()).toFixed(2)}
                   </div>
                 )}
@@ -452,7 +445,7 @@ export default function StakeCollateral() {
             </motion.div>
           )}
 
-          <div className="text-center text-gray-400 text-sm mb-8 leading-relaxed">
+          <div className="text-center text-gray-600 text-sm mb-8 leading-relaxed">
             {hasExistingCredit
               ? "Adding more USDC will increase your credit limit at a 1:1 ratio."
               : "Your staked USDC secures your credit line at a 1:1 ratio (100% collateral backing)."}

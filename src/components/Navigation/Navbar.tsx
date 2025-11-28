@@ -8,12 +8,12 @@ const Navbar = () => {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}
-      className="top-0 w-full z-50 bg-black/80 backdrop-blur-xl border-b border-orange-500/20 relative"
+      className="top-0 w-full z-50 bg-white/90 backdrop-blur-xl border-b border-gray-200 relative"
     >
       {/* Moving glowing line */}
       <div className="absolute bottom-0 left-0 right-0 h-0.5 overflow-hidden">
         <motion.div
-          className="absolute h-full w-32 bg-gradient-to-r from-transparent via-orange-500 to-transparent"
+          className="absolute h-full w-32 bg-gradient-to-r from-transparent via-black to-transparent"
           animate={{
             x: ["-128px", "95vw"],
           }}
@@ -24,7 +24,7 @@ const Navbar = () => {
             ease: "easeInOut",
           }}
           style={{
-            boxShadow: "0 0 10px rgba(249, 115, 22, 0.8), 0 0 20px rgba(249, 115, 22, 0.4)",
+            boxShadow: "0 0 10px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 0, 0, 0.1)",
           }}
         />
       </div>
@@ -38,7 +38,7 @@ const Navbar = () => {
                 alt="Logo"
                 className="w-12 h-12 flex items-center justify-center object-contain rounded-full"
               />
-              <span className="text-xl font-bold bg-gradient-to-r from-white to-orange-200 bg-clip-text text-transparent">
+              <span className="text-xl font-bold bg-gradient-to-r from-gray-900 via-gray-600 to-gray-900 bg-clip-text text-transparent">
                 Aion
               </span>
             </a>
@@ -49,7 +49,7 @@ const Navbar = () => {
               onClick={() => navigate("/borrow")}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-6 py-2 text-orange-300 hover:text-white transition-colors duration-300 font-medium"
+              className="px-6 py-2 text-gray-600 hover:text-black transition-colors duration-300 font-medium"
             >
               Borrow
             </motion.button>
@@ -57,7 +57,7 @@ const Navbar = () => {
               onClick={() => navigate("/lend/deposit")}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-6 py-2 text-orange-300 hover:text-white transition-colors duration-300 font-medium"
+              className="px-6 py-2 text-gray-600 hover:text-black transition-colors duration-300 font-medium"
             >
               Lend
             </motion.button>
@@ -65,7 +65,7 @@ const Navbar = () => {
               onClick={() => navigate("/waitlist")}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-6 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg font-medium hover:shadow-lg hover:shadow-orange-500/40 transition-all duration-300"
+              className="px-6 py-2 bg-gradient-to-r from-black to-gray-800 text-white rounded-lg font-medium hover:shadow-lg hover:shadow-black/40 transition-all duration-300"
             >
               Waitlist
             </motion.button>
