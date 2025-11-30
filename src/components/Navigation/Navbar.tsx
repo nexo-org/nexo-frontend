@@ -69,6 +69,34 @@ const Navbar = () => {
             >
               Waitlist
             </motion.button>
+
+            {/* Social Media Icons */}
+            <div className="flex gap-3 ml-4 pl-4 border-l border-gray-300">
+              <motion.a
+                href="https://x.com/aion_org"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:text-black transition-all duration-300"
+                aria-label="Follow Aion on Twitter"
+                title="Follow us on X (Twitter)"
+              >
+                <span className="text-xs font-bold">𝕏</span>
+              </motion.a>
+              <motion.a
+                href="https://www.instagram.com/aion_org/"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:text-black transition-all duration-300"
+                aria-label="Follow Aion on Instagram"
+                title="Follow us on Instagram"
+              >
+                <span className="text-xs font-bold">IG</span>
+              </motion.a>
+            </div>
           </div>
         </div>
       </div>

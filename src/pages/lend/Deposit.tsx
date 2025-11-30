@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { GlowingButton } from "../../components/GlowingButton";
 import LoginWithGoogleButton from "../../components/LoginWithGoogleButton";
 import { WalletSelector } from "../../components/WalletSelector";
+import { SEO } from "../../components/SEO";
 import {
   CONTRACT_ADDRESS,
   fetchUsdcBalance,
@@ -236,6 +237,15 @@ export default function Deposit() {
 
   return (
     <div className="min-h-screen bg-white text-black">
+      <SEO
+        title="Stake USDC & Earn Yield | Crypto Collateral Lending | Aion"
+        description="Stake your USDC as collateral for crypto credit lines while earning competitive APY. Provide liquidity for crypto-backed credit cards and earn passive income on your stablecoin holdings."
+        keywords="stake USDC for credit, USDC staking APY, crypto collateral lending, yield farming USDC, stablecoin lending pool, crypto credit collateral, USDC yield earning, crypto lending platform, DeFi USDC staking"
+        ogTitle="Stake USDC & Earn Yield - Crypto Collateral Lending Platform"
+        ogDescription="Earn competitive APY by staking USDC as collateral for crypto credit lines. Support crypto-backed spending while generating passive income on your stablecoin assets."
+        twitterTitle="Stake USDC & Earn Yield | Crypto Lending Platform"
+        twitterDescription="Stake your USDC and earn yield while powering crypto credit cards. Competitive APY, flexible lockup periods, and support the future of crypto spending."
+      />
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 py-24">
         <motion.div
@@ -245,9 +255,9 @@ export default function Deposit() {
           className="text-center mb-8"
         >
           <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-gray-900 via-gray-600 to-gray-900 bg-clip-text text-transparent">
-            Deposit & Earn
+            Stake USDC & Earn Yield
           </h1>
-          <p className="text-gray-600 text-lg">Deposit USDC to the lending pool and earn interest from borrowers</p>
+          <p className="text-gray-600 text-lg">Stake USDC as collateral for crypto credit lines while earning competitive APY from borrowers</p>
         </motion.div>
 
         {/* Protocol Stats */}
@@ -288,9 +298,9 @@ export default function Deposit() {
             className="bg-gray-50/80 backdrop-blur-2xl border border-gray-200 rounded-2xl p-8 text-center"
           >
             <Wallet className="w-16 h-16 text-black mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-black mb-4">Connect Wallet to Start Earning</h2>
+            <h2 className="text-2xl font-bold text-black mb-4">Connect Wallet for Crypto Credit</h2>
             <p className="text-gray-600 mb-6">
-              Connect your wallet to deposit USDC and start earning from the lending pool
+              Connect your wallet to stake USDC, enable crypto credit lines, and start earning yield on your collateral
             </p>
             <div className="w-full flex flex-row gap-2 justify-center">
               <WalletSelector />
@@ -393,7 +403,7 @@ export default function Deposit() {
                 </>
               ) : (
                 <>
-                  Deposit to Lending Pool
+                  Stake USDC for Credit
                   <DollarSign className="w-5 h-5" />
                 </>
               )}
@@ -456,10 +466,10 @@ export default function Deposit() {
                 <div className="text-sm text-gray-300">
                   <p className="font-medium text-blue-400 mb-1">How it works:</p>
                   <ul className="space-y-1 text-xs">
-                    <li>• Your USDC is deposited into the lending pool smart contract</li>
-                    <li>• Borrowers use your funds for credit lines and payments</li>
-                    <li>• You earn interest based on utilization and your lockup period</li>
-                    <li>• Longer lockup periods earn higher multipliers</li>
+                    <li>• Your USDC is staked as collateral for crypto credit lines</li>
+                    <li>• Enable crypto-backed credit without selling your assets</li>
+                    <li>• Earn competitive yield while your USDC backs real-world spending</li>
+                    <li>• Longer lockup periods earn higher yield multipliers</li>
                   </ul>
                 </div>
               </div>

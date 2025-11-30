@@ -17,6 +17,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GlowingButton } from "../components/GlowingButton";
 import Navbar from "../components/Navigation/Navbar";
+import { SEO } from "../components/SEO";
+import { Footer } from "../components/Footer";
 
 const WalletCard = () => {
   return (
@@ -37,7 +39,7 @@ const WalletCard = () => {
             <Wallet className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="text-black font-semibold">Credit Wallet</h3>
+            <h3 className="text-black font-semibold">Crypto Credit Wallet</h3>
             <p className="text-gray-400 text-sm">0x4f2a...8c3d</p>
           </div>
         </div>
@@ -184,29 +186,43 @@ export default function LandingPage() {
 
   const faqs = [
     {
-      question: "How is my credit limit calculated?",
+      question: "How does the crypto credit card work?",
       answer:
-        "Your credit limit is determined by our proprietary reputation scoring system that analyzes your on-chain activity, transaction history, and community trust metrics. No traditional credit checks required.",
+        "Aion's crypto credit card lets you spend crypto without selling your assets. Stake USDC as collateral to get instant crypto-backed credit lines. Use tap-to-pay technology for real-world purchases while earning yield on your collateral.",
     },
     {
-      question: "What wallets are supported?",
+      question: "Can I spend crypto without selling it?",
       answer:
-        "We support all major Web3 wallets including WalletConnect, Petra, and other popular Aptos-compatible wallets. Simply connect your existing wallet to get started.",
+        "Yes! Our crypto credit card allows you to spend your crypto purchasing power without triggering capital gains events. Your USDC collateral remains yours while backing your credit line for everyday spending.",
     },
     {
-      question: "What happens if I don't repay on time?",
+      question: "What makes this the best crypto credit card 2025?",
       answer:
-        "Late payments affect your on-chain reputation score and may reduce your future credit limits. However, we focus on flexible repayment terms and will work with you to find solutions before taking any drastic measures.",
+        "Unlike traditional crypto cards, Aion offers yield-earning collateral, non-custodial control, no liquidation of assets, and real tap-to-pay functionality. You keep ownership while gaining spending power.",
     },
     {
-      question: "How do lenders earn yield?",
+      question: "How do I earn yield on my crypto collateral?",
       answer:
-        "Lenders deposit funds into smart contract pools and earn competitive APY from borrower interest payments. All transactions are transparent and automated through Aptos blockchain smart contracts.",
+        "Your staked USDC earns competitive APY while serving as collateral for your crypto credit line. This creates self-repaying crypto credit where your yield helps cover interest payments automatically.",
+    },
+    {
+      question: "Is this better than Nexo or Coinbase crypto cards?",
+      answer:
+        "Aion offers true non-custodial crypto credit with yield-earning collateral, unlike centralized alternatives. You maintain self-custody while accessing crypto credit lines with competitive terms and real-world utility.",
     },
   ];
 
   return (
     <div className="min-h-screen bg-white text-black overflow-x-hidden">
+      <SEO
+        title="Aion - Best Crypto Credit Card 2025 | Spend Crypto Without Selling"
+        description="Get the best crypto credit card 2025. Spend crypto without selling with Aion's USDC-backed credit lines. Earn yield on collateral while using crypto for everyday purchases with tap-to-pay."
+        keywords="best crypto credit card 2025, crypto credit card, spend crypto without selling, USDC credit card, crypto backed credit card, stablecoin credit card, crypto collateral credit, yield backed credit, crypto tap to pay, real world crypto payments, avoid capital gains crypto"
+        ogTitle="Aion - Revolutionary Crypto Credit Card | Turn Crypto Into Spending Power"
+        ogDescription="Revolutionary crypto credit card that lets you spend crypto without selling. Stake USDC, get instant credit, earn yield on collateral. The future of crypto payments is here."
+        twitterTitle="Aion - Crypto Credit Card | Spend USDC Without Selling"
+        twitterDescription="Get instant crypto credit using your USDC. No selling required. Earn yield while spending crypto in stores with tap-to-pay technology."
+      />
       <Navbar />
 
       {/* Hero Section */}
@@ -224,12 +240,12 @@ export default function LandingPage() {
             className="mb-8"
           >
             <h1 className="text-6xl md:text-8xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-gray-600 to-gray-900 bg-clip-text text-transparent">
-              Next-Gen Payments.
+              Crypto Credit Card.
               <br />
-              One Tap Away.
+              Spend Without Selling.
             </h1>
             <p className="text-xl md:text-2xl text-gray-700 mb-12 max-w-3xl mx-auto leading-relaxed">
-              Borrow instantly, repay flexibly. No cards, no banks — just smart credit powered by Aptos.
+              Get instant crypto-backed credit using your USDC. Earn yield on collateral while spending crypto in real life with tap-to-pay technology. No selling required.
             </p>
           </motion.div>
 
@@ -273,29 +289,29 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <StepCard
               step={1}
-              title="Connect Wallet"
-              description="Connect your existing Web3 wallet or create a new one. Seamless integration with all major wallet providers."
+              title="Connect Crypto Wallet"
+              description="Connect your existing Web3 wallet to access crypto credit. Seamless integration with all major wallet providers for instant USDC credit lines."
               icon={Wallet}
               delay={0.1}
             />
             <StepCard
               step={2}
-              title="Get Your Credit Line"
-              description="Receive a personalized credit limit based on your on-chain reputation and community trust score."
+              title="Get Crypto-Backed Credit"
+              description="Receive instant crypto credit backed by your USDC collateral. No traditional credit checks - just stake crypto for credit."
               icon={CreditCard}
               delay={0.2}
             />
             <StepCard
               step={3}
-              title="Draw & Repay"
-              description="Borrow what you need, when you need it. Flexible repayment terms that work with your schedule."
+              title="Spend Crypto Everywhere"
+              description="Use your crypto credit for everyday purchases. Tap-to-pay in stores, online shopping, and real-world payments without selling your crypto."
               icon={RefreshCw}
               delay={0.3}
             />
             <StepCard
               step={4}
-              title="Lenders Earn"
-              description="Community lenders earn competitive yield through automated smart contract pools."
+              title="Earn Yield on Collateral"
+              description="Your staked USDC earns competitive APY while serving as collateral. Self-repaying crypto credit that grows your wealth."
               icon={PiggyBank}
               delay={0.4}
             />
@@ -313,10 +329,10 @@ export default function LandingPage() {
               transition={{ duration: 0.8 }}
             >
               <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-gray-800 via-gray-500 to-gray-800 bg-clip-text text-transparent">
-                Put Your Crypto to Work
+                Stake USDC for Credit
               </h2>
               <p className="text-xl text-gray-400 mb-8 leading-relaxed">
-                Deposit into lending pools and earn passive income while funding the next wave of DeFi credit.
+                Stake your USDC as collateral to unlock crypto credit lines. Earn competitive APY while your assets back real-world crypto spending power.
               </p>
 
               <div className="space-y-6 mb-8">
@@ -407,23 +423,23 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <FeatureCard
               icon={Zap}
-              title="Web3 Native"
-              description="Built for the decentralized web with support for all major wallet providers"
+              title="Crypto Card Technology"
+              description="Advanced crypto credit card technology built for Web3. Support for all major wallets and real-world payments."
             />
             <FeatureCard
               icon={Wallet}
-              title="Multi-Wallet Support"
-              description="Connect with WalletConnect, Petra, and other popular Aptos wallets"
+              title="USDC Credit Line"
+              description="Get instant credit backed by your USDC. Stable, reliable crypto collateral for everyday spending."
             />
             <FeatureCard
               icon={Target}
-              title="Reputation Scoring"
-              description="Credit limits based on on-chain activity and community trust metrics"
+              title="Yield-Backed Credit"
+              description="Your collateral earns yield while providing credit. Turn staked crypto into spending power that pays for itself."
             />
             <FeatureCard
               icon={Shield}
-              title="Aptos Native"
-              description="Fast transactions, low gas fees, and enterprise-grade security"
+              title="Tap-to-Pay Crypto"
+              description="Use crypto for real-world purchases with NFC tap-to-pay technology. Fast, secure, and widely accepted."
             />
           </div>
         </div>
@@ -437,17 +453,135 @@ export default function LandingPage() {
               Security & Transparency
             </h2>
             <p className="text-xl text-gray-400 mb-12 max-w-2xl mx-auto">
-              Your credit lives on-chain. Fully non-custodial. Transparent by design.
+              Your crypto credit is fully self-custodial and transparent. Avoid capital gains while spending crypto for everyday purchases.
             </p>
 
             <div className="flex flex-wrap justify-center items-center gap-8 mb-12">
               <div className="flex items-center gap-3 bg-black/50 backdrop-blur-sm rounded-xl px-6 py-3 border border-black/20">
                 <Shield className="w-8 h-8 text-black" />
-                <span className="text-lg font-medium">Aptos Blockchain</span>
+                <span className="text-lg font-medium">Non-Custodial Crypto Card</span>
               </div>
               <div className="flex items-center gap-3 bg-black/50 backdrop-blur-sm rounded-xl px-6 py-3 border border-black/20">
                 <Wallet className="w-8 h-8 text-black" />
-                <span className="text-lg font-medium">Multi-Wallet Support</span>
+                <span className="text-lg font-medium">Real-World Crypto Payments</span>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Comparison Section */}
+      <section className="py-24 px-4 bg-gradient-to-b from-transparent to-black/10">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-gray-800 via-gray-500 to-gray-800 bg-clip-text text-transparent">
+              Why Choose Aion Over Other Crypto Cards?
+            </h2>
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+              Compare Aion's crypto credit card with traditional crypto debit cards and centralized lending platforms
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="bg-gray-50/80 backdrop-blur-xl border border-gray-200 rounded-2xl p-8"
+          >
+            <div className="grid md:grid-cols-3 gap-8">
+              {/* Aion */}
+              <div className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-r from-black to-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <span className="text-white font-bold text-xl">Aion</span>
+                </div>
+                <h3 className="text-xl font-bold text-black mb-4">Best Crypto Credit Card 2025</h3>
+                <ul className="space-y-3 text-sm">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <span className="text-gray-700">True crypto credit (no selling)</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <span className="text-gray-700">Yield-earning USDC collateral</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <span className="text-gray-700">Non-custodial & self-repaying</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <span className="text-gray-700">Real-world tap-to-pay</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <span className="text-gray-700">Avoid capital gains tax</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Traditional Crypto Debit Cards */}
+              <div className="text-center">
+                <div className="w-16 h-16 bg-gray-400 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <span className="text-white font-bold text-sm">Others</span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-600 mb-4">Traditional Crypto Cards</h3>
+                <ul className="space-y-3 text-sm">
+                  <li className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-red-500 rounded-full"></div>
+                    <span className="text-gray-500">Requires selling crypto</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-red-500 rounded-full"></div>
+                    <span className="text-gray-500">No yield on holdings</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-red-500 rounded-full"></div>
+                    <span className="text-gray-500">Custodial control</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-red-500 rounded-full"></div>
+                    <span className="text-gray-500">Limited spending options</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-red-500 rounded-full"></div>
+                    <span className="text-gray-500">Capital gains implications</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Centralized Platforms */}
+              <div className="text-center">
+                <div className="w-16 h-16 bg-gray-400 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <span className="text-white font-bold text-xs">CeFi</span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-600 mb-4">Centralized Platforms</h3>
+                <ul className="space-y-3 text-sm">
+                  <li className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-yellow-500 rounded-full"></div>
+                    <span className="text-gray-500">Credit with collateral</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-red-500 rounded-full"></div>
+                    <span className="text-gray-500">Custodial risk</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-red-500 rounded-full"></div>
+                    <span className="text-gray-500">Centralized control</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-red-500 rounded-full"></div>
+                    <span className="text-gray-500">Geographic restrictions</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-yellow-500 rounded-full"></div>
+                    <span className="text-gray-500">Variable APY terms</span>
+                  </li>
+                </ul>
               </div>
             </div>
           </motion.div>
@@ -464,7 +598,7 @@ export default function LandingPage() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-gray-800 via-gray-500 to-gray-800 bg-clip-text text-transparent">
-              Frequently Asked Questions
+              Crypto Credit Card FAQ
             </h2>
           </motion.div>
 
@@ -494,10 +628,10 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto text-center">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
             <h2 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-gray-600 to-gray-900 bg-clip-text text-transparent">
-              Ready to get credit that works like the internet?
+              Ready for the best crypto credit card 2025?
             </h2>
             <p className="text-xl text-gray-400 mb-12 max-w-2xl mx-auto">
-              Join the future of decentralized finance. Start borrowing or lending today.
+              Experience crypto credit without selling your assets. Start spending crypto in stores with our stablecoin credit card.
             </p>
 
             <GlowingButton variant="primary" className="text-xl px-12 py-6">
@@ -507,6 +641,8 @@ export default function LandingPage() {
           </motion.div>
         </div>
       </section>
+
+      <Footer />
     </div>
   );
 }

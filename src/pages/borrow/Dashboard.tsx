@@ -19,6 +19,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GlowingButton } from "../../components/GlowingButton";
 import LoginWithGoogleButton from "../../components/LoginWithGoogleButton";
+import { SEO } from "../../components/SEO";
 
 type CreditSummaryCardProps = {
   creditLimit: number;
@@ -38,7 +39,7 @@ const CreditSummaryCard = ({ creditLimit, usedCredit, availableCredit }: CreditS
     >
       <div className="flex items-center justify-center gap-2 mb-4">
         <CreditCard className="w-6 h-6 text-black" />
-        <h2 className="text-xl font-semibold text-black">Credit Overview</h2>
+        <h2 className="text-xl font-semibold text-black">Crypto Credit Overview</h2>
       </div>
 
       <div className="mb-6">
@@ -483,6 +484,15 @@ export default function BorrowerDashboard() {
 
   return (
     <div className="min-h-screen bg-white text-black pt-20">
+      <SEO
+        title="Crypto Credit Dashboard | Manage Your USDC Credit Line | Aion"
+        description="Manage your crypto-backed credit line dashboard. View USDC collateral, outstanding loans, credit utilization, and make repayments. Monitor your crypto credit score and available spending power."
+        keywords="crypto credit dashboard, USDC credit line, crypto collateral management, crypto credit score, crypto backed loan dashboard, stablecoin credit management, crypto credit utilization, yield earning collateral"
+        ogTitle="Crypto Credit Dashboard - Manage Your Digital Asset Credit"
+        ogDescription="Complete dashboard for managing your crypto-backed credit. Track USDC collateral, monitor credit utilization, view outstanding loans, and optimize your crypto credit score."
+        twitterTitle="Crypto Credit Dashboard | USDC Collateral Management"
+        twitterDescription="Manage your crypto credit line with real-time dashboard. Track USDC collateral, credit utilization, and earn yield while maintaining spending power."
+      />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
@@ -493,7 +503,7 @@ export default function BorrowerDashboard() {
           className="text-center mb-12"
         >
           <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-gray-900 via-gray-600 to-gray-900 bg-clip-text text-transparent">
-            Your Credit Overview
+            Your Crypto Credit Dashboard
           </h1>
         </motion.div>
 
@@ -507,12 +517,12 @@ export default function BorrowerDashboard() {
             className="bg-gray-50/80 backdrop-blur-2xl border border-gray-200 rounded-2xl p-8 text-center"
           >
             <CreditCard className="w-16 h-16 text-black mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-black mb-4">No Active Credit Line</h2>
+            <h2 className="text-2xl font-bold text-black mb-4">No Active Crypto Credit Line</h2>
             <p className="text-gray-600 mb-6">
-              Start by staking USDC as collateral to open your credit line and begin borrowing
+              Stake your USDC as collateral to unlock crypto-backed credit and start spending crypto without selling your assets
             </p>
             <GlowingButton onClick={handleStakeMore} className="text-lg px-8 py-4">
-              Stake Collateral & Open Credit Line
+              Stake USDC & Get Crypto Credit
               <ArrowRight className="w-5 h-5" />
             </GlowingButton>
           </motion.div>
