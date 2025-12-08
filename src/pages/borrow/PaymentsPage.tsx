@@ -27,7 +27,6 @@ import {
 import { QRCodeSVG } from "qrcode.react";
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import { FloatingOrbs } from "../../components/FloatingOrbs";
 import { GlowingButton } from "../../components/GlowingButton";
 import LoginWithGoogleButton from "../../components/LoginWithGoogleButton";
@@ -37,7 +36,6 @@ import {
   aptos,
   CONTRACT_ADDRESS,
   fetchUsdcBalance,
-  handleTransactionError,
   unitsToUsdc,
   usdcToUnits,
   validateAptosAddress,
@@ -1092,23 +1090,23 @@ export default function PaymentsPage() {
   }, [account?.address]);
 
   // Setup pre-authorization (one-time setup like getting a credit card)
-  const setupPreAuthorization = async (totalLimitUsdc: number, perTxLimitUsdc: number, durationHours: number) => {
-    if (!account?.address) throw new Error("Wallet not connected");
+  // const setupPreAuthorization = async (totalLimitUsdc: number, perTxLimitUsdc: number, durationHours: number) => {
+  //   if (!account?.address) throw new Error("Wallet not connected");
 
-    const payload: InputTransactionData = {
-      data: {
-        function: `${CONTRACT_ADDRESS}::credit_manager::setup_pre_authorization`,
-        functionArguments: [
-          CONTRACT_ADDRESS,
-          usdcToUnits(totalLimitUsdc),
-          usdcToUnits(perTxLimitUsdc),
-          durationHours.toString(),
-        ],
-      },
-    };
+  //   const payload: InputTransactionData = {
+  //     data: {
+  //       function: `${CONTRACT_ADDRESS}::credit_manager::setup_pre_authorization`,
+  //       functionArguments: [
+  //         CONTRACT_ADDRESS,
+  //         usdcToUnits(totalLimitUsdc),
+  //         usdcToUnits(perTxLimitUsdc),
+  //         durationHours.toString(),
+  //       ],
+  //     },
+  //   };
 
-    return await signAndSubmitTransaction(payload);
-  };
+  //   return await signAndSubmitTransaction(payload);
+  // };
 
   // Execute instant payment (ultra-low gas) - FIXED TO MATCH INTEGRATION GUIDE
   const executeInstantPayment = async (recipientAddress: string, amountUsdc: number) => {
@@ -1245,40 +1243,40 @@ export default function PaymentsPage() {
   };
 
   // Handle pre-authorization setup
-  const handleSetupPreAuth = async () => {
-    if (!connected || !account?.address) {
-      toast.error("Please connect your wallet first");
-      return;
-    }
+  // const handleSetupPreAuth = async () => {
+  //   if (!connected || !account?.address) {
+  //     toast.error("Please connect your wallet first");
+  //     return;
+  //   }
 
-    if (!creditLineInfo || !creditLineInfo.isActive) {
-      toast.error("Please open a credit line first");
-      return;
-    }
+  //   if (!creditLineInfo || !creditLineInfo.isActive) {
+  //     toast.error("Please open a credit line first");
+  //     return;
+  //   }
 
-    try {
-      const totalLimit = Math.min(creditLineInfo.availableCredit, 100); // Max 100 USDC or available credit
-      const perTxLimit = Math.min(totalLimit * 0.2, 20); // 20% of total or max 20 USDC
-      const duration = 24; // 24 hours
+  //   try {
+  //     const totalLimit = Math.min(creditLineInfo.availableCredit, 100); // Max 100 USDC or available credit
+  //     const perTxLimit = Math.min(totalLimit * 0.2, 20); // 20% of total or max 20 USDC
+  //     const duration = 24; // 24 hours
 
-      toast.loading("Setting up instant payments...", { id: "preauth" });
+  //     toast.loading("Setting up instant payments...", { id: "preauth" });
 
-      const result = await setupPreAuthorization(totalLimit, perTxLimit, duration);
+  //     const result = await setupPreAuthorization(totalLimit, perTxLimit, duration);
 
-      console.log("Pre-authorization setup result:", result);
+  //     console.log("Pre-authorization setup result:", result);
 
-      toast.success(`Instant payments activated! Limit: $${totalLimit.toFixed(2)} USDC`, {
-        id: "preauth",
-      });
+  //     toast.success(`Instant payments activated! Limit: $${totalLimit.toFixed(2)} USDC`, {
+  //       id: "preauth",
+  //     });
 
-      // Refresh data
-      await loadData();
-    } catch (error: unknown) {
-      console.error("Pre-authorization setup error:", error);
-      const userFriendlyError = handleTransactionError(error);
-      toast.error(userFriendlyError, { id: "preauth" });
-    }
-  };
+  //     // Refresh data
+  //     await loadData();
+  //   } catch (error: unknown) {
+  //     console.error("Pre-authorization setup error:", error);
+  //     const userFriendlyError = handleTransactionError(error);
+  //     toast.error(userFriendlyError, { id: "preauth" });
+  //   }
+  // };
 
   // Auto-load data on wallet connection
   useEffect(() => {
