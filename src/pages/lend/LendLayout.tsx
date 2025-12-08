@@ -30,16 +30,16 @@ export default function LendLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-white text-black">
       <div className="fixed top-6 right-6 z-50 flex flex-row gap-2">
         <WalletSelector />
         <LoginWithGoogleButton />
       </div>
       <button
         onClick={handleMenuToggle}
-        className="fixed top-6 left-6 z-50 lg:hidden bg-black/40 backdrop-blur-xl border border-black/20 rounded-xl p-3 text-gray-400 hover:text-white transition-all duration-300 hover:border-black/40"
+        className="fixed top-6 left-6 z-50 lg:hidden bg-gray-50/80 backdrop-blur-xl border border-black/20 rounded-xl p-3 text-gray-600 hover:text-black transition-all duration-300 hover:border-black/40"
         style={{
-          background: "rgba(0, 0, 0, 0.4)",
+          background: "rgba(249, 250, 251, 0.8)",
           backdropFilter: "blur(20px)",
         }}
       >
