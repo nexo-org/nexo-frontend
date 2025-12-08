@@ -133,7 +133,7 @@ const VirtualCreditCard = ({
       >
         {/* Credit Card Front */}
         <motion.div
-          className={`relative w-full h-56 bg-black/40 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl p-6 text-white ${
+          className={`relative w-full h-56 bg-gradient-to-br from-black to-gray-800 backdrop-blur-2xl border border-black/20 rounded-2xl shadow-2xl p-6 text-white ${
             isFlipped ? "backface-hidden" : ""
           }`}
           animate={{
@@ -311,7 +311,7 @@ const VirtualCreditCard = ({
 
         {/* Credit Card Back (for flip effect) */}
         <motion.div
-          className={`absolute inset-0 w-full h-56 bg-black/60 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl ${
+          className={`absolute inset-0 w-full h-56 bg-gradient-to-br from-gray-800 to-black backdrop-blur-2xl border border-black/20 rounded-2xl shadow-2xl ${
             isFlipped ? "" : "backface-hidden"
           }`}
           style={{
@@ -341,13 +341,13 @@ const VirtualCreditCard = ({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="mt-4 bg-black/20 backdrop-blur-xl border border-white/10 rounded-xl p-4"
+          className="mt-4 bg-gray-100/80 backdrop-blur-xl border border-black/20 rounded-xl p-4"
         >
-          <div className="flex justify-between text-sm text-gray-400 mb-2">
+          <div className="flex justify-between text-sm text-gray-600 mb-2">
             <span>Credit Usage</span>
             <span>{usagePercentage.toFixed(1)}% used</span>
           </div>
-          <div className="w-full bg-gray-700 rounded-full h-2">
+          <div className="w-full bg-gray-300 rounded-full h-2">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${usagePercentage}%` }}
@@ -386,7 +386,7 @@ const QuickActions = ({ onQuickAmount, availableCredit }: QuickActionsProps) => 
       transition={{ duration: 0.6, delay: 0.2 }}
       className="mb-6"
     >
-      <h3 className="text-sm font-medium text-gray-400 mb-3">Quick Amounts</h3>
+      <h3 className="text-sm font-medium text-gray-600 mb-3">Quick Amounts</h3>
       <div className="flex flex-wrap gap-2">
         {quickAmounts.map((amount) => (
           <motion.button
@@ -394,7 +394,7 @@ const QuickActions = ({ onQuickAmount, availableCredit }: QuickActionsProps) => 
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => onQuickAmount(amount.toString())}
-            className="px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-gray-300 hover:border-orange-500/50 hover:text-white transition-all duration-300"
+            className="px-4 py-2 bg-gray-200/80 border border-gray-400/50 rounded-lg text-gray-700 hover:border-black/50 hover:text-black transition-all duration-300"
           >
             ${amount}
           </motion.button>
@@ -403,7 +403,7 @@ const QuickActions = ({ onQuickAmount, availableCredit }: QuickActionsProps) => 
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => onQuickAmount(availableCredit.toString())}
-          className="px-4 py-2 bg-orange-500/20 border border-orange-500/50 rounded-lg text-orange-300 hover:bg-orange-500/30 transition-all duration-300"
+          className="px-4 py-2 bg-black/10 border border-black/30 rounded-lg text-black hover:bg-black/20 transition-all duration-300"
         >
           MAX
         </motion.button>
@@ -419,12 +419,12 @@ type TabToggleProps = {
 
 const TabToggle = ({ activeTab, onTabChange }: TabToggleProps) => {
   return (
-    <div className="flex bg-gray-800/50 border border-gray-700/50 rounded-xl p-1 mb-8">
+    <div className="flex bg-gray-200/80 border border-gray-400/50 rounded-xl p-1 mb-8">
       <motion.button
         whileHover={{ scale: 1.02 }}
         onClick={() => onTabChange("payment")}
         className={`flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-300 relative ${
-          activeTab === "payment" ? "text-white" : "text-gray-400 hover:text-white"
+          activeTab === "payment" ? "text-black" : "text-gray-600 hover:text-black"
         }`}
       >
         {activeTab === "payment" && (
@@ -444,7 +444,7 @@ const TabToggle = ({ activeTab, onTabChange }: TabToggleProps) => {
         whileHover={{ scale: 1.02 }}
         onClick={() => onTabChange("nfc")}
         className={`flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-300 relative ${
-          activeTab === "nfc" ? "text-white" : "text-gray-400 hover:text-white"
+          activeTab === "nfc" ? "text-black" : "text-gray-600 hover:text-black"
         }`}
       >
         {activeTab === "nfc" && (
@@ -464,7 +464,7 @@ const TabToggle = ({ activeTab, onTabChange }: TabToggleProps) => {
         whileHover={{ scale: 1.02 }}
         onClick={() => onTabChange("receive")}
         className={`flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-300 relative ${
-          activeTab === "receive" ? "text-white" : "text-gray-400 hover:text-white"
+          activeTab === "receive" ? "text-black" : "text-gray-600 hover:text-black"
         }`}
       >
         {activeTab === "receive" && (
@@ -512,12 +512,12 @@ const QRScannerModal = ({ isOpen, onClose, onScan }: QRScannerModalProps) => {
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="bg-gradient-to-br from-gray-900/90 to-gray-800/90 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-6 max-w-md w-full"
+        className="bg-gray-50/90 backdrop-blur-xl border border-black/20 rounded-2xl p-6 max-w-md w-full"
       >
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl font-semibold text-white">Scan QR Code</h3>
-          <button onClick={onClose} className="p-2 hover:bg-gray-700/50 rounded-lg transition-colors">
-            <X className="w-5 h-5 text-gray-400" />
+          <h3 className="text-xl font-semibold text-black">Scan QR Code</h3>
+          <button onClick={onClose} className="p-2 hover:bg-gray-200/50 rounded-lg transition-colors">
+            <X className="w-5 h-5 text-gray-600" />
           </button>
         </div>
 
@@ -529,7 +529,7 @@ const QRScannerModal = ({ isOpen, onClose, onScan }: QRScannerModalProps) => {
               }
             }}
           />
-          <p className="text-gray-400 text-sm mt-2">Point your camera at a QR code to scan the wallet address</p>
+          <p className="text-gray-600 text-sm mt-2">Point your camera at a QR code to scan the wallet address</p>
         </div>
       </motion.div>
     </motion.div>
@@ -591,7 +591,7 @@ const PaymentSection = ({
       <div className="flex justify-end mb-2">
         <button
           className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
-            showNFC ? "bg-blue-600 text-white" : "bg-black/30 text-blue-300 hover:bg-blue-500/10 hover:text-white"
+            showNFC ? "bg-blue-600 text-white" : "bg-gray-200/80 text-blue-600 hover:bg-blue-100/50 hover:text-blue-700"
           }`}
           onClick={() => setShowNFC((v) => !v)}
         >
@@ -621,10 +621,10 @@ const PaymentSection = ({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="bg-black/20 backdrop-blur-2xl border border-white/10 rounded-2xl p-8 space-y-6"
+        className="bg-gray-50/80 backdrop-blur-2xl border border-black/20 rounded-2xl p-8 space-y-6"
       >
         {/* Security Badge */}
-        <div className="flex items-center gap-2 text-sm text-gray-400 mb-4">
+        <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
           <Shield className="w-4 h-4 text-green-400" />
           <span>Secured by blockchain technology</span>
           <Lock className="w-4 h-4 text-green-400" />
@@ -634,21 +634,21 @@ const PaymentSection = ({
 
         {/* Recipient Address */}
         <div>
-          <label className="block text-sm font-medium text-gray-400 mb-2">Recipient Wallet Address</label>
+          <label className="block text-sm font-medium text-gray-600 mb-2">Recipient Wallet Address</label>
           <div className="relative">
             <input
               type="text"
               value={recipientAddress}
               onChange={(e) => setRecipientAddress(e.target.value)}
               placeholder="0x..."
-              className="w-full bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-4 text-white placeholder-gray-500 focus:border-orange-500/50 focus:outline-none transition-all duration-300 pr-32"
+              className="w-full bg-gray-100/80 backdrop-blur-sm border border-black/20 rounded-xl p-4 text-black placeholder-gray-500 focus:border-black/50 focus:outline-none transition-all duration-300 pr-32"
             />
             <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex gap-1">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setShowQRScanner(true)}
-                className="p-2 bg-black/40 backdrop-blur-sm hover:bg-black/60 rounded-lg transition-colors duration-300"
+                className="p-2 bg-black/40 backdrop-blur-sm hover:bg-gray-200/80 rounded-lg transition-colors duration-300"
                 title="Scan QR Code"
               >
                 <Scan className="w-4 h-4 text-gray-400" />
@@ -657,7 +657,7 @@ const PaymentSection = ({
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handlePasteAddress}
-                className="p-2 bg-black/40 backdrop-blur-sm hover:bg-black/60 rounded-lg transition-colors duration-300"
+                className="p-2 bg-black/40 backdrop-blur-sm hover:bg-gray-200/80 rounded-lg transition-colors duration-300"
                 title="Paste from clipboard"
               >
                 <Copy className="w-4 h-4 text-gray-400" />
@@ -669,8 +669,8 @@ const PaymentSection = ({
         {/* Payment Amount */}
         <div>
           <div className="flex justify-between items-center mb-2">
-            <label className="text-sm font-medium text-gray-400">Payment Amount</label>
-            <span className="text-sm text-gray-400">Available: ${availableCredit.toLocaleString()} USDC</span>
+            <label className="text-sm font-medium text-gray-600">Payment Amount</label>
+            <span className="text-sm text-gray-600">Available: ${availableCredit.toLocaleString()} USDC</span>
           </div>
           <div className="relative">
             <input
@@ -678,10 +678,10 @@ const PaymentSection = ({
               value={paymentAmount}
               onChange={(e) => setPaymentAmount(e.target.value)}
               placeholder="0.00"
-              className="w-full bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-4 text-white placeholder-gray-500 focus:border-orange-500/50 focus:outline-none transition-all duration-300 pr-20 text-2xl font-bold"
+              className="w-full bg-gray-100/80 backdrop-blur-sm border border-black/20 rounded-xl p-4 text-black placeholder-gray-500 focus:border-black/50 focus:outline-none transition-all duration-300 pr-20 text-2xl font-bold"
             />
             <div className="absolute right-4 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
-              <span className="text-gray-400 font-medium">USDC</span>
+              <span className="text-gray-600 font-medium">USDC</span>
             </div>
           </div>
 
@@ -754,11 +754,11 @@ const ReceiveSection = ({ walletAddress }: ReceiveSectionProps) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="bg-black/20 backdrop-blur-2xl border border-white/10 rounded-2xl p-8 space-y-6"
+      className="bg-gray-50/80 backdrop-blur-2xl border border-black/20 rounded-2xl p-8 space-y-6"
     >
       <div className="text-center">
-        <h3 className="text-xl font-semibold text-white mb-2">Receive Payments</h3>
-        <p className="text-gray-400 text-sm">Share your QR code or wallet address to receive payments</p>
+        <h3 className="text-xl font-semibold text-black mb-2">Receive Payments</h3>
+        <p className="text-gray-600 text-sm">Share your QR code or wallet address to receive payments</p>
       </div>
 
       <div className="bg-white p-6 mx-auto w-fit rounded-xl shadow-lg">
@@ -782,16 +782,16 @@ const ReceiveSection = ({ walletAddress }: ReceiveSectionProps) => {
 
       <div className="space-y-3">
         <div className="text-center">
-          <p className="text-sm text-gray-400 mb-2">Your Wallet Address</p>
-          <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-lg p-3 flex items-center justify-between">
-            <span className="text-sm font-mono text-gray-300 truncate">
+          <p className="text-sm text-gray-600 mb-2">Your Wallet Address</p>
+          <div className="bg-gray-100/80 backdrop-blur-sm border border-black/20 rounded-lg p-3 flex items-center justify-between">
+            <span className="text-sm font-mono text-gray-600 truncate">
               {walletAddress && walletAddress.slice(0, 16)}...{walletAddress.slice(-6)}
             </span>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={copyAddress}
-              className="p-2 bg-black/40 backdrop-blur-sm hover:bg-black/60 rounded-lg transition-colors"
+              className="p-2 bg-black/40 backdrop-blur-sm hover:bg-gray-200/80 rounded-lg transition-colors"
             >
               {copied ? <CheckCircle className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4 text-gray-400" />}
             </motion.button>
@@ -802,7 +802,7 @@ const ReceiveSection = ({ walletAddress }: ReceiveSectionProps) => {
       <div className="bg-cyan-500/10 backdrop-blur-sm border border-cyan-500/20 rounded-xl p-4">
         <div className="flex items-start gap-3">
           <Info className="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" />
-          <p className="text-sm text-gray-300">
+          <p className="text-sm text-gray-600">
             Others can scan this QR code or use your wallet address to send you payments directly to your wallet.
           </p>
         </div>
@@ -931,11 +931,11 @@ const RecentTransactions = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.3 }}
-      className="bg-black/20 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 h-full flex flex-col"
+      className="bg-gray-50/80 backdrop-blur-2xl border border-black/20 rounded-2xl p-6 h-full flex flex-col"
     >
       <div className="flex items-center justify-between mb-4 flex-shrink-0">
-        <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-          <CreditCard className="w-5 h-5 text-orange-400" />
+        <h3 className="text-lg font-semibold text-black flex items-center gap-2">
+          <CreditCard className="w-5 h-5 text-black" />
           Recent Activity
         </h3>
         {onRefresh && (
@@ -944,7 +944,7 @@ const RecentTransactions = ({
             whileTap={{ scale: 0.95 }}
             onClick={onRefresh}
             disabled={loading}
-            className="p-2 bg-black/40 backdrop-blur-sm border border-white/10 rounded-lg text-gray-400 hover:text-white hover:border-orange-500/50 transition-all duration-300 disabled:opacity-50"
+            className="p-2 bg-gray-100/80 backdrop-blur-sm border border-black/20 rounded-lg text-gray-600 hover:text-black hover:border-black/50 transition-all duration-300 disabled:opacity-50"
             title="Refresh transactions"
           >
             <motion.div
@@ -961,7 +961,7 @@ const RecentTransactions = ({
         {loading ? (
           <div className="text-center py-8">
             <Loader className="w-8 h-8 text-purple-400 mx-auto mb-3 animate-spin" />
-            <p className="text-gray-400 text-sm">No activity yet</p>
+            <p className="text-gray-600 text-sm">No activity yet</p>
             <p className="text-gray-500 text-xs mt-1">Your credit card activity will appear here</p>
           </div>
         ) : (
@@ -975,21 +975,21 @@ const RecentTransactions = ({
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: 0.4 + index * 0.1 }}
-                className="flex items-center justify-between p-3 bg-black/40 backdrop-blur-sm rounded-xl hover:bg-black/60 transition-colors cursor-pointer"
+                className="flex items-center justify-between p-3 bg-black/40 backdrop-blur-sm rounded-xl hover:bg-gray-200/80 transition-colors cursor-pointer"
                 onClick={() => openTransactionHash(tx.hash)}
                 title={tx.hash ? "Click to view on explorer" : undefined}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-black/60 backdrop-blur-sm rounded-lg flex items-center justify-center">
+                  <div className="w-8 h-8 bg-gray-200/80 backdrop-blur-sm rounded-lg flex items-center justify-center">
                     {getTransactionIcon(tx.type)}
                   </div>
                   <div>
-                    <div className="text-white font-medium">{getTransactionLabel(tx.type)}</div>
-                    <div className="text-gray-400 text-sm">{tx.date}</div>
+                    <div className="text-black font-medium">{getTransactionLabel(tx.type)}</div>
+                    <div className="text-gray-600 text-sm">{tx.date}</div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-white font-medium">${tx.amount.toLocaleString()}</div>
+                  <div className="text-black font-medium">${tx.amount.toLocaleString()}</div>
                   <div className={`text-sm capitalize ${getStatusColor(tx.status)}`}>{tx.status}</div>
                 </div>
               </motion.div>
@@ -1290,18 +1290,17 @@ export default function PaymentsPage() {
   // Show loading while fetching data
   if (loading) {
     return (
-      <div className="min-h-screen bg-black text-white">
-        <FloatingOrbs />
+      <div className="min-h-screen bg-white text-black">
         <div className="relative z-10 max-w-2xl mx-auto px-4 py-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="bg-black/40 backdrop-blur-2xl border border-white/10 rounded-2xl p-8 text-center"
+            className="bg-gray-50/80 backdrop-blur-2xl border border-black/20 rounded-2xl p-8 text-center"
           >
-            <Loader className="w-12 h-12 text-orange-400 mx-auto mb-4 animate-spin" />
-            <h2 className="text-xl font-bold text-white mb-2">Loading Payment System...</h2>
-            <p className="text-gray-400">Fetching your credit information and payment settings</p>
+            <Loader className="w-12 h-12 text-black mx-auto mb-4 animate-spin" />
+            <h2 className="text-xl font-bold text-black mb-2">Loading Payment System...</h2>
+            <p className="text-gray-600">Fetching your credit information and payment settings</p>
           </motion.div>
         </div>
       </div>
@@ -1310,18 +1309,17 @@ export default function PaymentsPage() {
 
   if (!connected) {
     return (
-      <div className="min-h-screen bg-black text-white">
-        <FloatingOrbs />
+      <div className="min-h-screen bg-white text-black">
         <div className="relative z-10 max-w-2xl mx-auto px-4 py-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="bg-black/40 backdrop-blur-2xl border border-white/10 rounded-2xl p-8 text-center"
+            className="bg-gray-50/80 backdrop-blur-2xl border border-black/20 rounded-2xl p-8 text-center"
           >
-            <CreditCard className="w-16 h-16 text-orange-400 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-4">Connect Wallet for Payments</h2>
-            <p className="text-gray-400 mb-6">Connect your wallet to access instant payments and credit features</p>
+            <CreditCard className="w-16 h-16 text-black mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-black mb-4">Connect Wallet for Payments</h2>
+            <p className="text-gray-600 mb-6">Connect your wallet to access instant payments and credit features</p>
             <div className="space-y-4">
               <WalletSelector />
             </div>
@@ -1334,18 +1332,17 @@ export default function PaymentsPage() {
   // Check if user needs to open credit line - ENABLE THIS CHECK
   if (!creditLineInfo || !creditLineInfo.isActive) {
     return (
-      <div className="min-h-screen bg-black text-white">
-        <FloatingOrbs />
+      <div className="min-h-screen bg-white text-black">
         <div className="relative z-10 max-w-2xl mx-auto px-4 py-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="bg-black/40 backdrop-blur-2xl border border-white/10 rounded-2xl p-8 text-center"
+            className="bg-gray-50/80 backdrop-blur-2xl border border-black/20 rounded-2xl p-8 text-center"
           >
-            <CreditCard className="w-16 h-16 text-orange-400 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-4">Open Credit Line First</h2>
-            <p className="text-gray-400 mb-6">
+            <CreditCard className="w-16 h-16 text-black mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-black mb-4">Open Credit Line First</h2>
+            <p className="text-gray-600 mb-6">
               You need to open a credit line before you can make payments. This is like applying for a credit card.
             </p>
             <GlowingButton onClick={() => navigate("/borrow/stake")} className="text-lg px-8 py-4">
@@ -1359,7 +1356,7 @@ export default function PaymentsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-white text-black">
       <FloatingOrbs />
       <div className="fixed top-6 right-6 z-50 flex flex-row gap-2">
         <WalletSelector />
@@ -1369,10 +1366,10 @@ export default function PaymentsPage() {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-white via-orange-200 to-red-200 bg-clip-text text-transparent">
+              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 via-gray-600 to-gray-900 bg-clip-text text-transparent">
                 Instant Credit Payments
               </h1>
-              <p className="text-gray-400 mt-2 text-lg">
+              <p className="text-gray-600 mt-2 text-lg">
                 Pay instantly with your crypto credit line •
                 {preAuthStatus?.isActive ? " Ultra-low gas enabled ⚡" : " Setup required for ultra-low gas"}
               </p>
@@ -1381,6 +1378,7 @@ export default function PaymentsPage() {
         </div>
 
         {/* Show pre-auth setup if not active */}
+        {/* COMMENTED OUT: Ultra-Fast Payments Section
         {!preAuthStatus?.isActive && creditLineInfo && creditLineInfo.isActive && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -1404,6 +1402,7 @@ export default function PaymentsPage() {
             </div>
           </motion.div>
         )}
+        */}
 
         <VirtualCreditCard
           creditLimit={creditLineInfo?.creditLimit || 0}
@@ -1471,10 +1470,10 @@ export default function PaymentsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="mt-8 bg-black/20 backdrop-blur-2xl border border-green-500/20 rounded-2xl p-6"
+            className="mt-8 bg-green-50/80 backdrop-blur-2xl border border-green-500/20 rounded-2xl p-6"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-black flex items-center gap-2">
                 <Zap className="w-5 h-5 text-green-400" />
                 Instant Payments Active
               </h3>
@@ -1483,20 +1482,20 @@ export default function PaymentsPage() {
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               <div>
-                <div className="text-gray-400">Total Limit</div>
-                <div className="text-white font-semibold">${preAuthStatus.totalLimit.toFixed(2)}</div>
+                <div className="text-gray-600">Total Limit</div>
+                <div className="text-black font-semibold">${preAuthStatus.totalLimit.toFixed(2)}</div>
               </div>
               <div>
-                <div className="text-gray-400">Per Transaction</div>
-                <div className="text-white font-semibold">${preAuthStatus.perTxLimit.toFixed(2)}</div>
+                <div className="text-gray-600">Per Transaction</div>
+                <div className="text-black font-semibold">${preAuthStatus.perTxLimit.toFixed(2)}</div>
               </div>
               <div>
-                <div className="text-gray-400">Used</div>
-                <div className="text-orange-400 font-semibold">${preAuthStatus.usedAmount.toFixed(2)}</div>
+                <div className="text-gray-600">Used</div>
+                <div className="text-black font-semibold">${preAuthStatus.usedAmount.toFixed(2)}</div>
               </div>
               <div>
-                <div className="text-gray-400">Expires</div>
-                <div className="text-white font-semibold">
+                <div className="text-gray-600">Expires</div>
+                <div className="text-black font-semibold">
                   {new Date(preAuthStatus.expiresAt * 1000).toLocaleDateString()}
                 </div>
               </div>
